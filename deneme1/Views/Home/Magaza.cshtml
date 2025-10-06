@@ -1,0 +1,385 @@
+﻿@{
+    ViewData["Title"] = "Magaza";
+    Layout = "~/Views/Shared/_Home.cshtml";
+}
+@model eticaret.Modeller.UrunListesi
+
+<!-- Breadcrumb Begin -->
+<div class="breadcrumb-option">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="breadcrumb__links">
+                    <a href="@Url.Action("Index", "Home")"><i class="fa fa-home"></i> Home</a>
+                    @if (ViewBag.BreadcrumbKategoriler != null && ((List<string>)ViewBag.BreadcrumbKategoriler).Count > 0)
+                    {
+                        @foreach (var kategori in (List<string>)ViewBag.BreadcrumbKategoriler)
+                        {
+                            <span>@kategori</span>
+                        }
+                    }
+                    else
+                    {
+                        <span>Shop</span>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Breadcrumb End -->
+<!-- Shop Section Begin -->
+<section class="shop spad">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-3 col-md-3">
+                <div class="shop__sidebar">
+                    <div class="sidebar__categories">
+                        <div class="section-title">
+                            <h4>Categories</h4>
+                        </div>
+                        <div class="categories__accordion">
+                            <div class="accordion" id="accordionExample">
+                                @foreach (var ktg in Model.Kategorilerim)
+                                {
+                                    var altktg = Model.Altkategorilerim.Where(a => a.AnaKategoriId == ktg.Id && a.UstKategoriId == null).ToList();
+                                    <div class="card">
+                                        <div class="card-heading">
+                                            <a data-toggle="collapse" data-target="#kategori_@ktg.Id" role="button" aria-expanded="false" aria-controls="kategori_@ktg.Id">
+                                                @ktg.KategoriAdi
+                                            </a>
+                                        </div>
+                                        <div id="kategori_@ktg.Id" class="collapse" data-parent="#accordionExample">
+                                            <div class="card-body">
+                                                <ul>
+                                                    @foreach (var alt in altktg)
+                                                    {
+                                                        var altinAltKategoriler = Model.Altkategorilerim.Where(x => x.UstKategoriId == alt.Id).ToList();
+                                                        <li>
+                                                            <div class="d-flex align-items-center justify-content-between">
+                                                                <!-- Ana kategori linki -->
+                                                                <a asp-action="magaza" asp-controller="Home" asp-route-id="@alt.Id"
+                                                                   class="flex-grow-1 @(ViewBag.SecilenKategoriId != null && ViewBag.SecilenKategoriId.ToString() == alt.Id.ToString() ? "active" : "")">
+                                                                    @alt.KategoriAdi
+                                                                </a>
+
+                                                                <!-- Eğer alt kategorileri varsa toggle butonu -->
+                                                                @if (altinAltKategoriler.Any())
+                                                                {
+                                                                    <span class="toggle-btn" onclick="toggleSubCategory(@alt.Id)" style="cursor: pointer; margin-left: 10px;">
+                                                                        <i class="fa fa-angle-right" id="icon_@alt.Id"></i>
+                                                                    </span>
+                                                                }
+                                                            </div>
+
+                                                            <!-- Alt kategoriler -->
+                                                            @if (altinAltKategoriler.Any())
+                                                            {
+                                                                <ul id="sub_@alt.Id" style="display: none; margin-left: 20px; margin-top: 5px;">
+                                                                    @foreach (var altinAlt in altinAltKategoriler)
+                                                                    {
+                                                                        <li>
+                                                                            <a asp-action="magaza" asp-controller="Home" asp-route-id="@altinAlt.Id"
+                                                                               class="@(ViewBag.SecilenKategoriId != null && ViewBag.SecilenKategoriId.ToString() == altinAlt.Id.ToString() ? "active" : "")"
+                                                                               style="font-size: 13px; color: #666;">
+                                                                                @altinAlt.KategoriAdi
+                                                                            </a>
+                                                                        </li>
+                                                                    }
+                                                                </ul>
+                                                            }
+                                                        </li>
+                                                    }
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    <form asp-action="magaza" asp-controller="Home" method="get">
+                         <!-- Seçili kategori ID'sini gizli alan olarak ekle -->
+                        @if (ViewBag.SecilenKategoriId != null)
+                        {
+                            <input type="hidden" name="id" value="@ViewBag.SecilenKategoriId" />
+                        }
+
+                        <div class="sidebar__filter">
+                            <div class="section-title">
+                                <h4>Shop by price</h4>
+                            </div>
+                            <div class="filter-range-wrap">
+                                <div class="price-range ui-slider ui-corner-all ui-slider-horizontal ui-widget ui-widget-content"
+                                     data-min="10" data-max="999"></div>
+                                <div class="range-slider">
+                                    <div class="price-input">
+                                        <p>Price:</p>
+                                        <input type="text" name="min" id="minamount">
+                                        <input type="text" name="max" id="maxamount">
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="btn btn-danger" type="submit">Filtrele</button>
+                        </div>
+                    </form>
+                    <div class="sidebar__sizes">
+                        <div class="section-title">
+                            <h4>Shop by size</h4>
+                        </div>
+                        <div class="size__list">
+                            <label for="xxs">
+                                xxs
+                                <input type="checkbox" id="xxs">
+                                <span class="checkmark"></span>
+                            </label>
+                            <label for="xs">
+                                xs
+                                <input type="checkbox" id="xs">
+                                <span class="checkmark"></span>
+                            </label>
+                            <label for="xss">
+                                xs-s
+                                <input type="checkbox" id="xss">
+                                <span class="checkmark"></span>
+                            </label>
+                            <label for="s">
+                                s
+                                <input type="checkbox" id="s">
+                                <span class="checkmark"></span>
+                            </label>
+                            <label for="m">
+                                m
+                                <input type="checkbox" id="m">
+                                <span class="checkmark"></span>
+                            </label>
+                            <label for="ml">
+                                m-l
+                                <input type="checkbox" id="ml">
+                                <span class="checkmark"></span>
+                            </label>
+                            <label for="l">
+                                l
+                                <input type="checkbox" id="l">
+                                <span class="checkmark"></span>
+                            </label>
+                            <label for="xl">
+                                xl
+                                <input type="checkbox" id="xl">
+                                <span class="checkmark"></span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="sidebar__color">
+                        <div class="section-title">
+                            <h4>Shop by color</h4>
+                        </div>
+                        <div class="size__list color__list">
+                            <label for="black">
+                                Blacks
+                                <input type="checkbox" id="black">
+                                <span class="checkmark"></span>
+                            </label>
+                            <label for="whites">
+                                Whites
+                                <input type="checkbox" id="whites">
+                                <span class="checkmark"></span>
+                            </label>
+                            <label for="reds">
+                                Reds
+                                <input type="checkbox" id="reds">
+                                <span class="checkmark"></span>
+                            </label>
+                            <label for="greys">
+                                Greys
+                                <input type="checkbox" id="greys">
+                                <span class="checkmark"></span>
+                            </label>
+                            <label for="blues">
+                                Blues
+                                <input type="checkbox" id="blues">
+                                <span class="checkmark"></span>
+                            </label>
+                            <label for="beige">
+                                Beige Tones
+                                <input type="checkbox" id="beige">
+                                <span class="checkmark"></span>
+                            </label>
+                            <label for="greens">
+                                Greens
+                                <input type="checkbox" id="greens">
+                                <span class="checkmark"></span>
+                            </label>
+                            <label for="yellows">
+                                Yellows
+                                <input type="checkbox" id="yellows">
+                                <span class="checkmark"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-9 col-md-9">
+                <div class="row">
+                    @foreach (var urun in Model.Urunlerim)
+                    {
+                        var resim = Model.UrunGorsellerim.FirstOrDefault(u => u.Urunid == urun.Id && u.Baslangic == true);
+                        if (resim != null)
+                        {
+                            <div class="col-lg-4 col-md-6">
+                                <div class="product__item">
+                                    <div class="product__item__pic set-bg" data-setbg="@Url.Content("~/uploads/urunler/" + urun.Id + "/" + resim.Ad)">
+                                        <div class="label new">New</div>
+                                        <ul class="product__hover">
+                                            <li><a href="@Url.Content("~/uploads/urunler/" + urun.Id + "/" + resim.Ad)" class="image-popup"><span class="arrow_expand"></span></a></li>
+                                            <li><a href="#"><span class="icon_heart_alt"></span></a></li>
+                                            <li><a href="#"><span class="icon_bag_alt"></span></a></li>
+                                        </ul>
+                                    </div>
+                                    <div class="product__item__text">
+                                        <h6><a href="#">@urun.UrunAdi</a></h6>
+                                        <div class="rating">
+                                            <i class="fa fa-star"></i>
+                                            <i class="fa fa-star"></i>
+                                            <i class="fa fa-star"></i>
+                                            <i class="fa fa-star"></i>
+                                            <i class="fa fa-star"></i>
+                                        </div>
+                                        <div class="product__price">
+                                            @if (urun.IndirimliFiyat != null)
+                                            {
+                                                <div class="product__price">
+                                                    $ @urun.IndirimliFiyat <span>$ @urun.Satis</span>
+                                                </div>
+                                            }
+                                            else
+                                            {
+                                                <div class="product__price">
+                                                    $ @urun.Satis
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    }
+                    <div class="col-lg-12 text-center">
+                        <div class="pagination__option">
+                            <a href="#">1</a>
+                            <a href="#">2</a>
+                            <a href="#">3</a>
+                            <a href="#"><i class="fa fa-angle-right"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Shop Section End -->
+<!-- Instagram Begin -->
+<div class="instagram">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-2 col-md-4 col-sm-4 p-0">
+                <div class="instagram__item set-bg" data-setbg="/ana/img/instagram/insta-1.jpg">
+                    <div class="instagram__text">
+                        <i class="fa fa-instagram"></i>
+                        <a href="#"> ashion_shop</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-2 col-md-4 col-sm-4 p-0">
+                <div class="instagram__item set-bg" data-setbg="/ana/img/instagram/insta-2.jpg">
+                    <div class="instagram__text">
+                        <i class="fa fa-instagram"></i>
+                        <a href="#"> ashion_shop</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-2 col-md-4 col-sm-4 p-0">
+                <div class="instagram__item set-bg" data-setbg="/ana/img/instagram/insta-3.jpg">
+                    <div class="instagram__text">
+                        <i class="fa fa-instagram"></i>
+                        <a href="#"> ashion_shop</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-2 col-md-4 col-sm-4 p-0">
+                <div class="instagram__item set-bg" data-setbg="/ana/img/instagram/insta-4.jpg">
+                    <div class="instagram__text">
+                        <i class="fa fa-instagram"></i>
+                        <a href="#"> ashion_shop</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-2 col-md-4 col-sm-4 p-0">
+                <div class="instagram__item set-bg" data-setbg="/ana/img/instagram/insta-5.jpg">
+                    <div class="instagram__text">
+                        <i class="fa fa-instagram"></i>
+                        <a href="#"> ashion_shop</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-2 col-md-4 col-sm-4 p-0">
+                <div class="instagram__item set-bg" data-setbg="/ana/img/instagram/insta-6.jpg">
+                    <div class="instagram__text">
+                        <i class="fa fa-instagram"></i>
+                        <a href="#"> ashion_shop</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Instagram End -->
+
+<script>
+    function toggleSubCategory(kategoriId) {
+        var subList = document.getElementById('sub_' + kategoriId);
+        var icon = document.getElementById('icon_' + kategoriId);
+
+        if (subList.style.display === 'none' || subList.style.display === '') {
+            // Alt kategorileri göster
+            subList.style.display = 'block';
+            icon.classList.remove('fa-angle-right');
+            icon.classList.add('fa-angle-down');
+        } else {
+            // Alt kategorileri gizle
+            subList.style.display = 'none';
+            icon.classList.remove('fa-angle-down');
+            icon.classList.add('fa-angle-right');
+        }
+    }
+
+    // Sayfa yüklendiğinde aktif kategorilerin yolunu aç
+    document.addEventListener('DOMContentLoaded', function() {
+        // Ana kategoriyi aç (active link varsa)
+        var activeLinks = document.querySelectorAll('a.active');
+
+        activeLinks.forEach(function(activeLink) {
+            // Ana kategoriyi bul ve aç
+            var parentCard = activeLink.closest('.card');
+            if (parentCard) {
+                var collapse = parentCard.querySelector('.collapse');
+                if (collapse) {
+                    collapse.classList.add('show');
+                }
+            }
+
+            // Eğer alt kategori aktifse, üst kategoriyi de aç
+            var subCategory = activeLink.closest('ul[id^="sub_"]');
+            if (subCategory) {
+                var kategoriId = subCategory.id.replace('sub_', '');
+                var icon = document.getElementById('icon_' + kategoriId);
+
+                subCategory.style.display = 'block';
+                if (icon) {
+                    icon.classList.remove('fa-angle-right');
+                    icon.classList.add('fa-angle-down');
+                }
+            }
+        });
+    });
+</script>

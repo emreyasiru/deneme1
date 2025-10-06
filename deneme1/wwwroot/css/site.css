@@ -1,0 +1,1131 @@
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 60px;
+}
+
+.form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
+  color: var(--bs-secondary-color);
+  text-align: end;
+}
+
+.form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
+  text-align: start;
+}
+
+.arkarenk thead th {
+    background-color: #4e73df; /* koyu gri/siyah */
+    color: #fff; /* beyaz yazý */
+}
+/* Form Card Stilleri */
+.card {
+    box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+    border: 1px solid #e3e6f0;
+    border-radius: 0.35rem;
+    margin-bottom: 1.5rem;
+}
+
+.card-header {
+    background-color: #f8f9fc;
+    border-bottom: 1px solid #e3e6f0;
+    padding: 0.75rem 1.25rem;
+    font-weight: 600;
+    color: #5a5c69;
+}
+
+.card-body {
+    padding: 1.5rem;
+    background-color: #fff;
+}
+
+.card-footer {
+    background-color: #f8f9fc;
+    border-top: 1px solid #e3e6f0;
+    padding: 0.75rem 1.25rem;
+}
+
+/* Form Genel Stilleri */
+.form-horizontal {
+    margin: 0;
+}
+
+    .form-horizontal .row {
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+
+        .form-horizontal .row:last-child {
+            margin-bottom: 0;
+        }
+
+/* Label Stilleri */
+.form-control-label {
+    font-weight: 600;
+    color: #5a5c69;
+    margin-bottom: 0;
+    display: flex;
+    align-items: center;
+    min-height: 38px;
+}
+
+/* Form Control Stilleri */
+.form-control {
+    border: 2px solid #d1d3e2;
+    border-radius: 0.35rem;
+    color: #3a3b45;
+    font-size: 0.95rem;
+    transition: all 0.15s ease-in-out;
+    padding: 0.6rem 0.9rem;
+    height: auto;
+    line-height: 1.5;
+    font-weight: 500;
+}
+
+    .form-control:focus {
+        border-color: #4e73df;
+        box-shadow: 0 0 0 0.25rem rgba(78, 115, 223, 0.3);
+        outline: 0;
+    }
+
+    .form-control:disabled {
+        background-color: #eaecf4;
+        opacity: 1;
+        color: #858796;
+    }
+
+/* Select Stilleri */
+.form-select {
+    border: 2px solid #d1d3e2;
+    border-radius: 0.35rem;
+    color: #3a3b45;
+    font-size: 0.95rem;
+    font-weight: 500;
+    transition: all 0.15s ease-in-out;
+    padding: 0.6rem 2.5rem 0.6rem 0.9rem;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23495057' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m1 6 7 7 7-7'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 0.8rem center;
+    background-size: 14px 10px;
+    appearance: none;
+}
+
+    .form-select:focus {
+        border-color: #4e73df;
+        box-shadow: 0 0 0 0.25rem rgba(78, 115, 223, 0.3);
+        outline: 0;
+    }
+
+    .form-select:disabled {
+        background-color: #eaecf4;
+        opacity: 1;
+        color: #858796;
+    }
+
+/* Select Boyutlarý */
+.form-select-lg {
+    padding: 0.7rem 3rem 0.7rem 1.2rem;
+    font-size: 1.1rem;
+    border-radius: 0.35rem;
+    background-position: right 1rem center;
+}
+
+.form-select-sm {
+    padding: 0.4rem 2rem 0.4rem 0.7rem;
+    font-size: 0.85rem;
+    border-radius: 0.35rem;
+    background-position: right 0.6rem center;
+}
+
+/* Textarea Stilleri */
+textarea.form-control {
+    resize: vertical;
+    min-height: 120px;
+}
+
+/* Plaintext Stilleri */
+.form-control-plaintext {
+    padding: 0.375rem 0;
+    margin-bottom: 0;
+    line-height: 1.5;
+    color: #5a5c69;
+    background-color: transparent;
+    border: solid transparent;
+    border-width: 1px 0;
+    font-weight: 500;
+}
+
+/* Radio ve Checkbox Stilleri */
+.form-check {
+    position: relative;
+    display: block;
+    padding-left: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.form-check-input {
+    position: absolute;
+    margin-top: 0.3rem;
+    margin-left: -1.5rem;
+    width: 1rem;
+    height: 1rem;
+    cursor: pointer;
+    background-color: #fff;
+    border: 1px solid #d1d3e2;
+    appearance: none;
+    color-adjust: exact;
+}
+
+    .form-check-input[type="radio"] {
+        border-radius: 50%;
+    }
+
+    .form-check-input[type="checkbox"] {
+        border-radius: 0.25rem;
+    }
+
+    .form-check-input:focus {
+        border-color: #bac8f3;
+        outline: 0;
+        box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.25);
+    }
+
+    .form-check-input:checked {
+        background-color: #4e73df;
+        border-color: #4e73df;
+    }
+
+        .form-check-input:checked[type="radio"] {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='2' fill='%23fff'/%3e%3c/svg%3e");
+        }
+
+        .form-check-input:checked[type="checkbox"] {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%23fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='m6 10 3 3 6-6'/%3e%3c/svg%3e");
+        }
+
+.form-check-label {
+    color: #5a5c69;
+    cursor: pointer;
+    font-size: 0.875rem;
+    margin-bottom: 0;
+}
+
+/* Inline Form Check */
+.form-check-inline {
+    display: inline-block;
+    margin-right: 1rem;
+    margin-bottom: 0;
+}
+
+/* Help Text */
+.form-text {
+    margin-top: 0.25rem;
+    font-size: 0.75rem;
+    color: #858796;
+}
+
+/* File Input */
+input[type="file"].form-control {
+    padding: 0.6rem 0.9rem;
+    height: auto;
+    line-height: 1.5;
+    border: 2px solid #d1d3e2;
+    font-size: 0.95rem;
+    color: #3a3b45;
+    font-weight: 500;
+}
+
+    input[type="file"].form-control::file-selector-button {
+        padding: 0.5rem 1rem;
+        margin: -0.6rem -0.9rem;
+        margin-inline-end: 0.9rem;
+        color: #3a3b45;
+        background-color: #f8f9fc;
+        border: 0;
+        border-inline-end: 2px solid #d1d3e2;
+        border-radius: 0;
+        transition: all 0.15s ease-in-out;
+        font-weight: 600;
+    }
+
+    input[type="file"].form-control:hover::file-selector-button {
+        background-color: #eaecf4;
+    }
+
+/* Button Stilleri */
+.btn-primary {
+    background-color: #4e73df;
+    border-color: #4e73df;
+    color: #fff;
+    font-size: 0.95rem;
+    font-weight: 600;
+    padding: 0.65rem 1.2rem;
+    border-radius: 0.35rem;
+    transition: all 0.15s;
+    min-width: 120px;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+
+    .btn-primary:hover {
+        background-color: #2e59d9;
+        border-color: #2653d4;
+        color: #fff;
+        box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.15);
+        transform: translateY(-1px);
+    }
+
+.btn-danger {
+    background-color: #e74a3b;
+    border-color: #e74a3b;
+    color: #fff;
+    font-size: 0.95rem;
+    font-weight: 600;
+    padding: 0.65rem 1.2rem;
+    border-radius: 0.35rem;
+    transition: all 0.15s;
+    min-width: 120px;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+
+    .btn-danger:hover {
+        background-color: #c23321;
+        border-color: #b52d1c;
+        color: #fff;
+        box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.15);
+        transform: translateY(-1px);
+    }
+
+.btn-sm {
+    padding: 0.45rem 0.8rem;
+    font-size: 0.85rem;
+    border-radius: 0.25rem;
+    min-width: 100px;
+}
+
+/* Responsive Ayarlarý */
+@media (max-width: 768px) {
+    .form-horizontal .row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .form-horizontal .col-md-3 {
+        margin-bottom: 0.5rem;
+    }
+
+    .form-control-label {
+        min-height: auto;
+        text-align: left;
+    }
+
+    .form-check-inline {
+        display: block;
+        margin-right: 0;
+        margin-bottom: 0.5rem;
+    }
+}
+
+/*  Ürünler sayfasý CSS Custom Table Styles for SB Admin 2 Theme */
+.col-lg-9 {
+    width: 100% !important;
+    max-width: 100% !important;
+    flex: none !important;
+}
+.table--no-card {
+    background: #fff;
+    border-radius: 0.5rem;
+    box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+    border: none;
+    overflow: hidden;
+}
+
+.table-responsive {
+    border-radius: 0.5rem;
+}
+
+.table-earning {
+    margin-bottom: 0;
+    color: #5a5c69;
+    font-size: 0.875rem;
+}
+
+    .table-earning thead th {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: #fff;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        letter-spacing: 0.5px;
+        border: none;
+        padding: 1rem 0.75rem;
+        position: relative;
+    }
+
+        .table-earning thead th::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+    .table-earning tbody td {
+        padding: 1rem 0.75rem;
+        border-top: 1px solid #e3e6f0;
+        vertical-align: middle;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+    .table-earning tbody tr {
+        transition: all 0.3s ease;
+    }
+
+        .table-earning tbody tr:hover {
+            background-color: #f8f9fc;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+            .table-earning tbody tr:hover td {
+                color: #3a3b45;
+            }
+
+/* Badge Styles */
+.badge {
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 0.4rem 0.8rem;
+    border-radius: 0.35rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+    .badge.bg-success {
+        background: linear-gradient(135deg, #1cc88a 0%, #13855c 100%);
+        color: #fff;
+        border: none;
+    }
+
+    .badge.bg-warning {
+        background: linear-gradient(135deg, #f6c23e 0%, #dda20a 100%);
+        color: #fff;
+        border: none;
+    }
+
+    .badge.bg-danger {
+        background: linear-gradient(135deg, #e74a3b 0%, #c0392b 100%);
+        color: #fff;
+        border: none;
+    }
+
+    .badge.bg-info {
+        background: linear-gradient(135deg, #36b9cc 0%, #258391 100%);
+        color: #fff;
+        border: none;
+    }
+
+/* Price Styling */
+.table-earning td.text-right {
+    font-weight: 700;
+    color: #3a3b45;
+}
+
+/* Order ID Styling */
+.table-earning tbody td:nth-child(2) {
+    color: #5e72e4;
+    font-weight: 600;
+    font-family: 'Monaco', 'Consolas', monospace;
+}
+
+/* Product Name Styling */
+.table-earning tbody td:nth-child(3) {
+    font-weight: 600;
+    color: #32325d;
+    max-width: 250px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Customer Name Styling */
+.table-earning tbody td:nth-child(7) {
+    color: #525f7f;
+    font-weight: 600;
+}
+
+/* Date Styling */
+.table-earning tbody td:first-child {
+    color: #8898aa;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+/* Scroll Bar Styling */
+.has-scroll::-webkit-scrollbar {
+    height: 6px;
+}
+
+.has-scroll::-webkit-scrollbar-track {
+    background: #f8f9fc;
+    border-radius: 10px;
+}
+
+.has-scroll::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 10px;
+}
+
+    .has-scroll::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+    }
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    .table-earning {
+        font-size: 0.75rem;
+    }
+
+        .table-earning thead th {
+            padding: 0.75rem 0.5rem;
+            font-size: 0.65rem;
+        }
+
+        .table-earning tbody td {
+            padding: 0.75rem 0.5rem;
+        }
+
+            .table-earning tbody td:nth-child(3) {
+                max-width: 150px;
+            }
+}
+
+/* Animation for table loading */
+.table-earning tbody tr {
+    opacity: 0;
+    animation: fadeInUp 0.6s ease forwards;
+}
+
+    .table-earning tbody tr:nth-child(1) {
+        animation-delay: 0.1s;
+    }
+
+    .table-earning tbody tr:nth-child(2) {
+        animation-delay: 0.2s;
+    }
+
+    .table-earning tbody tr:nth-child(3) {
+        animation-delay: 0.3s;
+    }
+
+    .table-earning tbody tr:nth-child(4) {
+        animation-delay: 0.4s;
+    }
+
+    .table-earning tbody tr:nth-child(5) {
+        animation-delay: 0.5s;
+    }
+
+    .table-earning tbody tr:nth-child(6) {
+        animation-delay: 0.6s;
+    }
+
+    .table-earning tbody tr:nth-child(7) {
+        animation-delay: 0.7s;
+    }
+
+    .table-earning tbody tr:nth-child(8) {
+        animation-delay: 0.8s;
+    }
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Additional styling for better visual hierarchy */
+.m-b-30 {
+    margin-bottom: 2rem;
+}
+
+/* Status badge hover effects */
+.badge {
+    transition: all 0.3s ease;
+    cursor: default;
+}
+
+    .badge:hover {
+        transform: scale(1.05);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    }
+
+/* Price highlighting */
+.table-earning tbody td:nth-child(6) {
+    font-size: 0.9rem;
+    color: #1cc88a;
+    font-weight: 700;
+}
+
+/* Ürün Ekleme Formu CSS - SB Admin 2 Uyumlu */
+
+/* Container Geniþlik Ayarý */
+.col {
+    width: 100% !important;
+    max-width: 100% !important;
+    flex: none !important;
+}
+
+/* Form Card Stilleri */
+.card-body {
+    background: #fff;
+    border-radius: 0.5rem;
+    box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+    border: none;
+    padding: 2rem;
+    margin-bottom: 1rem;
+    position: relative;
+    overflow: hidden;
+}
+
+    .card-body::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+.card-footer {
+    background: #f8f9fc;
+    border-top: 2px solid #e3e6f0;
+    border-radius: 0 0 0.5rem 0.5rem;
+    padding: 1.5rem 2rem;
+    box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+}
+
+/* Form Horizontal Ayarlarý */
+.form-horizontal {
+    margin: 0;
+}
+
+    .form-horizontal .row {
+        align-items: center;
+        margin-bottom: 1.5rem;
+        transition: all 0.3s ease;
+    }
+
+        .form-horizontal .row:hover {
+            transform: translateX(5px);
+        }
+
+/* Label Stilleri */
+.form-control-label {
+    font-weight: 700;
+    color: #5a5c69;
+    margin-bottom: 0;
+    display: flex;
+    align-items: center;
+    min-height: 48px;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    position: relative;
+}
+
+    .form-control-label::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        width: 0;
+        height: 2px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        transition: width 0.3s ease;
+    }
+
+.row:focus-within .form-control-label::after {
+    width: 100%;
+}
+
+/* Input Stilleri */
+.form-control {
+    border: 2px solid #e3e6f0;
+    border-radius: 0.5rem;
+    color: #3a3b45;
+    font-size: 0.95rem;
+    font-weight: 500;
+    padding: 0.75rem 1rem;
+    height: 48px;
+    transition: all 0.3s ease;
+    background: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+    .form-control:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 0.25rem rgba(102, 126, 234, 0.25), 0 4px 12px rgba(102, 126, 234, 0.15);
+        outline: 0;
+        transform: translateY(-2px);
+        background: #fff;
+    }
+
+    .form-control::placeholder {
+        color: #a0a6b8;
+        font-style: italic;
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus::placeholder {
+        color: #d1d3e2;
+    }
+
+/* Textarea Özel Stilleri */
+textarea.form-control {
+    height: auto;
+    min-height: 120px;
+    resize: vertical;
+    font-family: inherit;
+    line-height: 1.6;
+}
+
+/* Select Stilleri */
+.form-select {
+    border: 2px solid #e3e6f0;
+    border-radius: 0.5rem;
+    color: #3a3b45;
+    font-size: 0.95rem;
+    font-weight: 500;
+    padding: 0.75rem 2.5rem 0.75rem 1rem;
+    height: 48px;
+    transition: all 0.3s ease;
+    background: #fff url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23667eea' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m1 6 7 7 7-7'/%3e%3c/svg%3e") no-repeat right 1rem center;
+    background-size: 16px 12px;
+    appearance: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+    .form-select:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 0.25rem rgba(102, 126, 234, 0.25), 0 4px 12px rgba(102, 126, 234, 0.15);
+        outline: 0;
+        transform: translateY(-2px);
+    }
+
+    .form-select option {
+        padding: 0.5rem;
+        background: #fff;
+        color: #3a3b45;
+    }
+
+/* File Input Stilleri */
+input[type="file"].form-control {
+    padding: 0.75rem 1rem;
+    height: auto;
+    min-height: 48px;
+    border: 2px dashed #d1d3e2;
+    background: #f8f9fc;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+    input[type="file"].form-control:hover {
+        border-color: #667eea;
+        background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+    }
+
+    input[type="file"].form-control:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 0.25rem rgba(102, 126, 234, 0.25);
+        background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+    }
+
+    input[type="file"].form-control::file-selector-button {
+        padding: 0.5rem 1rem;
+        margin: -0.75rem -1rem -0.75rem -1rem;
+        margin-inline-end: 1rem;
+        color: #fff;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        border-radius: 0.5rem 0 0 0.5rem;
+        transition: all 0.3s ease;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-size: 0.8rem;
+    }
+
+    input[type="file"].form-control:hover::file-selector-button {
+        background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+        transform: scale(1.05);
+    }
+
+/* Button Stilleri */
+.btn {
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-radius: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    font-size: 0.85rem;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+    .btn::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        transition: left 0.5s;
+    }
+
+    .btn:hover::before {
+        left: 100%;
+    }
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    color: #fff;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+    .btn-primary:hover {
+        background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        transform: translateY(-2px);
+    }
+
+.btn-danger {
+    background: linear-gradient(135deg, #e74a3b 0%, #c0392b 100%);
+    border: none;
+    color: #fff;
+    box-shadow: 0 4px 15px rgba(231, 74, 59, 0.3);
+}
+
+    .btn-danger:hover {
+        background: linear-gradient(135deg, #dc3545 0%, #bd2130 100%);
+        box-shadow: 0 6px 20px rgba(231, 74, 59, 0.4);
+        transform: translateY(-2px);
+    }
+
+/* Form Animation */
+.form-horizontal .row {
+    opacity: 0;
+    animation: slideInLeft 0.6s ease forwards;
+}
+
+    .form-horizontal .row:nth-child(1) {
+        animation-delay: 0.1s;
+    }
+
+    .form-horizontal .row:nth-child(2) {
+        animation-delay: 0.2s;
+    }
+
+    .form-horizontal .row:nth-child(3) {
+        animation-delay: 0.3s;
+    }
+
+    .form-horizontal .row:nth-child(4) {
+        animation-delay: 0.4s;
+    }
+
+    .form-horizontal .row:nth-child(5) {
+        animation-delay: 0.5s;
+    }
+
+    .form-horizontal .row:nth-child(6) {
+        animation-delay: 0.6s;
+    }
+
+    .form-horizontal .row:nth-child(7) {
+        animation-delay: 0.7s;
+    }
+
+    .form-horizontal .row:nth-child(8) {
+        animation-delay: 0.8s;
+    }
+
+    .form-horizontal .row:nth-child(9) {
+        animation-delay: 0.9s;
+    }
+
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Card Footer Animation */
+.card-footer {
+    opacity: 0;
+    animation: fadeInUp 0.6s ease forwards;
+    animation-delay: 1s;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Ýcon Stilleri */
+.btn i {
+    margin-right: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+.btn:hover i {
+    transform: scale(1.1);
+}
+
+/* Input Group Özel Stilleri */
+.input-group {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    border-radius: 0.5rem;
+    overflow: hidden;
+}
+
+    .input-group .form-control {
+        border-radius: 0;
+        box-shadow: none;
+    }
+
+        .input-group .form-control:first-child {
+            border-radius: 0.5rem 0 0 0.5rem;
+        }
+
+        .input-group .form-control:last-child {
+            border-radius: 0 0.5rem 0.5rem 0;
+        }
+
+/* Validation Stilleri */
+.form-control.is-valid {
+    border-color: #1cc88a;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3e%3cpath fill='%231cc88a' d='m2.3 6.73.94-.94 2.94 2.94L7.88 7 9 8.06 4.88 12.2z'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 16px 12px;
+}
+
+.form-control.is-invalid {
+    border-color: #e74a3b;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3e%3cpath fill='%23e74a3b' d='M6 0a6 6 0 1 0 0 12A6 6 0 0 0 6 0zM4.94 8.94L6 7.88l1.06 1.06-.94.94L6 9.82l-1.06 1.06-.94-.94z'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 16px 12px;
+}
+
+/* Responsive Ayarlar */
+@media (max-width: 768px) {
+    .card-body {
+        padding: 1.5rem;
+    }
+
+    .form-horizontal .row {
+        flex-direction: column;
+        align-items: stretch;
+        margin-bottom: 1rem;
+    }
+
+    .form-control-label {
+        min-height: auto;
+        text-align: left;
+        margin-bottom: 0.5rem;
+    }
+
+    .btn {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+
+    .card-footer {
+        padding: 1rem;
+        text-align: center;
+    }
+
+        .card-footer .btn {
+            margin: 0.25rem;
+            min-width: 120px;
+        }
+}
+
+@media (max-width: 576px) {
+    .card-body {
+        padding: 1rem;
+    }
+
+    .form-control {
+        font-size: 16px; /* iOS zoom prevention */
+    }
+}
+
+/* Focus States Ýyileþtirmesi */
+.form-control:focus,
+.form-select:focus {
+    animation: focusGlow 0.3s ease;
+}
+
+@keyframes focusGlow {
+    0% {
+        box-shadow: 0 0 0 0 rgba(102, 126, 234, 0.4);
+    }
+
+    50% {
+        box-shadow: 0 0 0 8px rgba(102, 126, 234, 0.1);
+    }
+
+    100% {
+        box-shadow: 0 0 0 0.25rem rgba(102, 126, 234, 0.25), 0 4px 12px rgba(102, 126, 234, 0.15);
+    }
+}
+
+/* Loading State (Form submit sonrasý) */
+.form-loading .form-control,
+.form-loading .form-select {
+    pointer-events: none;
+    opacity: 0.7;
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: loading 2s infinite;
+}
+
+@keyframes loading {
+    0% {
+        background-position: 200% 0;
+    }
+
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+/* Success Animation */
+.form-success .form-control {
+    border-color: #1cc88a;
+    animation: successPulse 0.6s ease;
+}
+
+@keyframes successPulse {
+    0% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(28, 200, 138, 0.4);
+    }
+
+    50% {
+        transform: scale(1.02);
+        box-shadow: 0 0 0 10px rgba(28, 200, 138, 0.1);
+    }
+
+    100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(28, 200, 138, 0);
+    }
+}
+
+/* Kategori Select Ýyileþtirmesi */
+#kategori,
+#altkategori {
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+}
+
+    #kategori:focus,
+    #altkategori:focus {
+        background: #fff;
+    }
+
+/* Form Title Ekleme (isteðe baðlý) */
+.form-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #3a3b45;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    position: relative;
+    padding-bottom: 1rem;
+}
+
+    .form-title::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 60px;
+        height: 3px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 2px;
+    }
+
+/* Ajax Loading Indicator */
+.ajax-loading {
+    position: relative;
+}
+
+    .ajax-loading::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        right: 10px;
+        transform: translateY(-50%);
+        width: 16px;
+        height: 16px;
+        border: 2px solid #e3e6f0;
+        border-top: 2px solid #667eea;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+    }
+
+@keyframes spin {
+    0% {
+        transform: translateY(-50%) rotate(0deg);
+    }
+
+    100% {
+        transform: translateY(-50%) rotate(360deg);
+    }
+}

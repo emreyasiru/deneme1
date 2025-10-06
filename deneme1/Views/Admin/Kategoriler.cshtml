@@ -1,0 +1,123 @@
+﻿
+@{
+    ViewData["Title"] = "Kategoriler";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@model eticaret.Modeller.Kategori
+<div class="row">
+    <div class="col-12 mb-3 ">
+        <button class="btn btn-primary mr-3" data-toggle="modal" data-target="#kategoriekle">Kategori Ekle</button>
+        <button class="btn btn-secondary" data-toggle="modal" data-target="#altkategoriekle">Alt Kategori Ekle</button>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-12">
+        <div class="table-responsive table--no-card m-b-30 has-scroll">
+            <table class="table table-borderless table-striped table-earning arkarenk">
+                <thead>
+                    <tr>
+                        <th>Üst Kategori</th>
+                        <th>Kategori Adı</th>
+                        <th>Ürün Sayısı</th>
+                        <th>İşlem</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach(var ktg in Model.AnaKategoriList){
+                    <tr>
+                        <td></td>
+                        <td>@ktg.KategoriAdi</td>
+                        
+                        <td></td>
+                        <td> <a asp-action="KategoriDuzenle" asp-controller="Duzenle" asp-route-id="@ktg.Id" class="btn btn-sm btn-warning mx-3">Düzenle</a>
+                                <a asp-action="KategoriSil" asp-controller="Sil" class="btn btn-sm btn-danger mx-3">Sil</a>
+                        </td>
+                    </tr>
+                    }
+                    @foreach (var ktg in Model.AltKategoriList)
+                    {
+                        <tr>
+                            <td>@ktg.UstKategoriId</td>
+                            <td>@ktg.KategoriAdi</td>
+
+                            <td></td>
+                            <td>
+                                <a asp-action="KategoriDuzenle" asp-controller="Duzenle" asp-route-id="@ktg.Id" class="btn btn-sm btn-warning mx-3">Düzenle</a>
+                                <a asp-action="KategoriSil" asp-controller="Sil" class="btn btn-sm btn-danger mx-3">Sil</a>
+                            </td>
+                        </tr>
+                    }
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="kategoriekle" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel"> Kategori Ekleme</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form asp-controller="Admin" asp-action="KategoriEkle" method="post">
+            <div class="modal-body">
+                
+                    <input type="text" name="Kategori_Adi" class="form-control" id="exampleFormControlInput1" placeholder="kategori adı">
+                    <input type="hidden" name="anakategori" value="0" />
+                
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Vazgeç</button>
+                <button type="submit" class="btn btn-primary">Kaydet</button>
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="altkategoriekle" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Alt Kategori Ekleme</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form asp-controller="Admin" asp-action="KategoriEkle" method="post">
+                <div class="modal-body">
+
+                    <input type="text" name="Kategori_Adi" class="form-control" id="exampleFormControlInput1" placeholder="Kategori Adı">
+                    <label for="exampleFormControlInput1">Ana Kategori Seç</label>
+                    <select class="form-control" name="anakategori">
+                        @foreach(var anaktg in Model.AnaKategoriList)
+                        {
+                            <option value="@anaktg.Id">@anaktg.KategoriAdi</option>
+                        }
+                        
+                    </select>
+                    <label for="exampleFormControlInput1">Alt Kategori Seç</label>
+                    <select class="form-control" name="altkategori">
+                        <option value="0" >Kategori Seç</option>
+                        }
+                        @foreach (var altktg in Model.AltKategoriList)
+                        {
+                            <option value="@altktg.Id">@altktg.KategoriAdi</option>
+                        }
+                    </select>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Vazgeç</button>
+                    <button type="submit" class="btn btn-primary">Kaydet</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

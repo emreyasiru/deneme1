@@ -1,0 +1,246 @@
+﻿@model List<eticaret.Modeller.UrunListeView>
+@{
+    ViewData["Title"] = "Urunler";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="col-lg-12">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>Ürünler</h2>
+        <a href="@Url.Action("UrunEkle", "Admin")" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Yeni Ürün Ekle
+        </a>
+    </div>
+
+    <!-- Success/Error Messages -->
+    <div id="alertContainer"></div>
+
+    <div class="table-responsive table--no-card m-b-30 has-scroll">
+        <table class="table table-borderless table-striped table-earning">
+            <thead>
+                <tr>
+                    <th>Ürün ID</th>
+                    <th>Ürün Adı</th>
+                    <th>Kategori</th>
+                    <th class="text-right">Stok</th>
+                    <th class="text-right">Alış Fiyatı</th>
+                    <th class="text-right">Satış Fiyatı</th>
+                    <th class="text-right">İndirimli Fiyat</th>
+                    <th>Açıklama</th>
+                    <th class="text-center">İşlemler</th>
+                </tr>
+            </thead>
+            <tbody id="urunlerTable">
+                @if (Model != null && Model.Count > 0)
+                {
+                    @foreach (var urun in Model)
+                    {
+                        <tr id="urun-@urun.Id">
+                            <td>@urun.Id</td>
+                            <td><strong>@urun.UrunAdi</strong></td>
+                            <td><span class="badge bg-info">@urun.KategoriAdi</span></td>
+                            <td class="text-right">
+                                @if (urun.Stok <= 5)
+                                {
+                                    <span class="badge bg-danger">@urun.Stok</span>
+                                }
+                                else if (urun.Stok <= 20)
+                                {
+                                    <span class="badge bg-warning">@urun.Stok</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-success">@urun.Stok</span>
+                                }
+                            </td>
+                            <td class="text-right">
+                                @if (urun.Alis.HasValue)
+                                {
+                                    <span>₺@urun.Alis.Value.ToString("N2")</span>
+                                }
+                                else
+                                {
+                                    <span class="text-muted">-</span>
+                                }
+                            </td>
+                            <td class="text-right"><strong>₺@urun.Satis.ToString("N2")</strong></td>
+                            <td class="text-right">
+                                @if (urun.IndirimliFiyat.HasValue)
+                                {
+                                    <span class="text-success">₺@urun.IndirimliFiyat.Value.ToString("N2")</span>
+                                }
+                                else
+                                {
+                                    <span class="text-muted">-</span>
+                                }
+                            </td>
+                            <td>
+                                @if (!string.IsNullOrEmpty(urun.Aciklama))
+                                {
+                                    <span title="@urun.Aciklama">
+                                        @(urun.Aciklama.Length > 30 ? urun.Aciklama.Substring(0, 30) + "..." : urun.Aciklama)
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="text-muted">Açıklama yok</span>
+                                }
+                            </td>
+                            <td class="text-center">
+                                <div class="btn-group" role="group">
+                                    <button type="button" class="btn btn-sm btn-outline-primary" title="Düzenle">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-outline-danger btn-sil"
+                                            title="Sil"
+                                            data-urun-id="@urun.Id"
+                                            data-urun-adi="@urun.UrunAdi">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                            <!-- Mevcut detay butonu yerine bunu koyun -->
+                                            <a href="@Url.Action("UrunDetay", "Admin", new { id = urun.Id })" 
+                                               class="btn btn-sm btn-outline-info" 
+                                               title="Detay">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr id="emptyRow">
+                        <td colspan="9" class="text-center py-4">
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle"></i>
+                                Henüz ürün bulunmamaktadır. <a href="@Url.Action("UrunEkle", "Admin")">İlk ürününüzü ekleyin</a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    @if (Model != null && Model.Count > 0)
+    {
+        <div class="d-flex justify-content-between align-items-center mt-3" id="urunSayisi">
+            <div>
+                <small class="text-muted">Toplam <span id="toplamUrun">@Model.Count</span> ürün gösteriliyor</small>
+            </div>
+            <div>
+                <small class="text-muted">
+                    Düşük Stok: <span class="badge bg-danger">≤5</span>
+                    Orta Stok: <span class="badge bg-warning">6-20</span>
+                    Yüksek Stok: <span class="badge bg-success">≥21</span>
+                </small>
+            </div>
+        </div>
+    }
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+        // Ürün silme butonuna tıklandığında
+        $(document).on('click', '.btn-sil', function() {
+            const urunId = $(this).data('urun-id');
+            const urunAdi = $(this).data('urun-adi');
+
+            // Onay dialog'u
+            if (confirm(`Bu ürünü silmek istediğinizden emin misiniz?\n\nÜrün: ${urunAdi}\n\nBu işlem geri alınamaz!`)) {
+                urunSil(urunId, urunAdi);
+            }
+        });
+    });
+
+    function urunSil(urunId, urunAdi) {
+        // Loading modal'ı göster
+        $('#loadingModal').modal('show');
+
+        // Silme butonunu devre dışı bırak
+        $(`.btn-sil[data-urun-id="${urunId}"]`).prop('disabled', true);
+
+        $.ajax({
+            url: '@Url.Action("UrunSil", "Admin")',
+            type: 'POST',
+            data: { id: urunId },
+            success: function(response) {
+                // Loading modal'ı gizle
+                $('#loadingModal').modal('hide');
+
+                if (response.success) {
+                    // Başarı mesajı göster
+                    showAlert('success', response.message);
+
+                    // Satırı tablodan kaldır (animasyonlu)
+                    $(`#urun-${urunId}`).fadeOut(500, function() {
+                        $(this).remove();
+                        updateUrunSayisi();
+                    });
+
+                } else {
+                    // Hata mesajı göster
+                    showAlert('danger', response.message);
+
+                    // Butonu tekrar aktif et
+                    $(`.btn-sil[data-urun-id="${urunId}"]`).prop('disabled', false);
+                }
+            },
+            error: function(xhr, status, error) {
+                // Loading modal'ı gizle
+                $('#loadingModal').modal('hide');
+
+                // Hata mesajı göster
+                showAlert('danger', 'Bir hata oluştu. Lütfen tekrar deneyin.');
+
+                // Butonu tekrar aktif et
+                $(`.btn-sil[data-urun-id="${urunId}"]`).prop('disabled', false);
+
+                console.error('AJAX Error:', error);
+            }
+        });
+    }
+
+    function showAlert(type, message) {
+        const alertHtml = `
+            <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+                <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-triangle'}"></i>
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        `;
+
+        $('#alertContainer').html(alertHtml);
+
+        // 5 saniye sonra alert'i otomatik kapat
+        setTimeout(function() {
+            $('.alert').fadeOut(500);
+        }, 5000);
+    }
+
+    function updateUrunSayisi() {
+        const mevcutUrunSayisi = $('#urunlerTable tr').length;
+
+        if (mevcutUrunSayisi === 0) {
+            // Eğer hiç ürün kalmadıysa boş mesajı göster
+            $('#urunlerTable').html(`
+                <tr id="emptyRow">
+                    <td colspan="9" class="text-center py-4">
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle"></i>
+                            Henüz ürün bulunmamaktadır. <a href="@Url.Action("UrunEkle", "Admin")">İlk ürününüzü ekleyin</a>
+                        </div>
+                    </td>
+                </tr>
+            `);
+
+            // Ürün sayısı div'ini gizle
+            $('#urunSayisi').hide();
+        } else {
+            // Ürün sayısını güncelle
+            $('#toplamUrun').text(mevcutUrunSayisi);
+        }
+    }
+</script>

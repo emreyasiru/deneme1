@@ -1,0 +1,294 @@
+﻿@{
+    ViewData["Title"] = "UrunEkle";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@model eticaret.Modeller.UrunKayit
+
+<div class="col">
+    @if (!string.IsNullOrEmpty(ViewBag.ErrorMessage))
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @ViewBag.ErrorMessage
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    @if (!string.IsNullOrEmpty(ViewBag.SuccessMessage))
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @ViewBag.SuccessMessage
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="card-body">
+        <form action="@Url.Action("UrunEkle", "Admin")" method="post" enctype="multipart/form-data" class="form-horizontal">
+
+            <div class="row mb-3">
+                <div class="col col-md-3">
+                    <label for="UrunAdi" class="form-control-label">Ürün Adı <span class="text-danger">*</span></label>
+                </div>
+                <div class="col-12 col-md-9">
+                    <input type="text" id="UrunAdi" name="UrunAdi" placeholder="Ürün adını giriniz" class="form-control" required>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col col-md-3">
+                    <label for="StokAdeti" class="form-control-label">Stok Adeti</label>
+                </div>
+                <div class="col-12 col-md-9">
+                    <input type="number" id="StokAdeti" name="StokAdeti" placeholder="Adet giriniz" class="form-control" min="0" step="1">
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col col-md-3">
+                    <label for="Aciklama" class="form-control-label">Ürün Açıklaması</label>
+                </div>
+                <div class="col-12 col-md-9">
+                    <textarea name="Aciklama" id="Aciklama" rows="9" placeholder="Açıklama..." class="form-control"></textarea>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col col-md-3">
+                    <label for="AlisFiyati" class="form-control-label">Alış Fiyatı</label>
+                </div>
+                <div class="col-12 col-md-9">
+                    <input type="number" id="AlisFiyati" name="AlisFiyati" placeholder="0.00" class="form-control" min="0" step="0.01">
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col col-md-3">
+                    <label for="SatisFiyati" class="form-control-label">Satış Fiyatı</label>
+                </div>
+                <div class="col-12 col-md-9">
+                    <input type="number" id="SatisFiyati" name="SatisFiyati" placeholder="0.00" class="form-control" min="0" step="0.01">
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col col-md-3">
+                    <label for="IndirimliFiyat" class="form-control-label">İndirimli Fiyat</label>
+                </div>
+                <div class="col-12 col-md-9">
+                    <input type="number" id="IndirimliFiyat" name="IndirimliFiyat" placeholder="0.00" class="form-control" min="0" step="0.01">
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col col-md-3">
+                    <label for="kategori" class="form-control-label">Kategori <span class="text-danger">*</span></label>
+                </div>
+                <div class="col-12 col-md-9" id="ekleme">
+                    <select name="Kategori" id="kategori" class="form-select" onchange="secim()" required>
+                        <option value="">Kategori Seç</option>
+                        @foreach (var itemm in Model.Kategorilerim)
+                        {
+                            <option value="@itemm.Id">@itemm.KategoriAdi</option>
+                        }
+                    </select>
+
+                    <!-- Bu input artık form ile gönderilecek gerçek değeri tutar -->
+                    <input type="hidden" name="GercekKategori" id="gercekKategori" value="">
+
+                    <script>
+                        // Global değişken - en son seçilen kategori ID'sini tutar
+                        let enSonSecilenKategori = "";
+
+                        function secim() {
+                            var ekle = document.getElementById("kategori").value;
+                            var alan = document.getElementById("ekleme");
+
+                            // Ana kategori seçildiğinde global değişkeni ve hidden input'u güncelle
+                            enSonSecilenKategori = ekle;
+                            document.getElementById("gercekKategori").value = ekle;
+
+                            // Önceki dinamik içerikleri temizle
+                            temizleDinamikIcerik();
+
+                            if (!ekle || ekle === "") {
+                                enSonSecilenKategori = "";
+                                document.getElementById("gercekKategori").value = "";
+                                return;
+                            }
+
+                            $.ajax({
+                                url: "@Url.Action("KategoriGetir", "Admin")",
+                                type: "GET",
+                                data: { id: ekle },
+                                success: function (cevap) {
+                                    alan.insertAdjacentHTML('beforeend', cevap);
+                                },
+                                error: function (xhr) {
+                                    console.error("Ajax hatası:", xhr.responseText);
+                                }
+                            });
+                        }
+
+                        function secimim(selectElement) {
+                            var ekle = selectElement.value;
+                            var alan = document.getElementById("ekleme");
+                            var mevcutSeviye = parseInt(selectElement.getAttribute('data-seviye'));
+
+                            // Alt kategori seçildiğinde global değişkeni ve hidden input'u güncelle
+                            if (ekle && ekle !== "") {
+                                enSonSecilenKategori = ekle;
+                                document.getElementById("gercekKategori").value = ekle;
+                            }
+
+                            // Bu seviyeden sonraki tüm içerikleri temizle
+                            temizleSonrakiSeviyeler(mevcutSeviye);
+
+                            if (!ekle || ekle === "") {
+                                return;
+                            }
+
+                            $.ajax({
+                                url: "@Url.Action("AltKategoriGetir", "Admin")",
+                                type: "GET",
+                                data: { id: ekle },
+                                success: function (cevap) {
+                                    alan.insertAdjacentHTML('beforeend', cevap);
+                                },
+                                error: function (xhr) {
+                                    console.error("Ajax hatası:", xhr.responseText);
+                                }
+                            });
+                        }
+
+                        function temizleDinamikIcerik() {
+                            var alan = document.getElementById("ekleme");
+                            var dinamikElementler = alan.querySelectorAll('.alert, select[data-seviye]');
+                            dinamikElementler.forEach(function(element) {
+                                element.remove();
+                            });
+                        }
+
+                        function temizleSonrakiSeviyeler(mevcutSeviye) {
+                            var alan = document.getElementById("ekleme");
+                            var sonrakiElementler = alan.querySelectorAll('select[data-seviye]');
+
+                            sonrakiElementler.forEach(function(element) {
+                                var elementSeviye = parseInt(element.getAttribute('data-seviye'));
+                                if (elementSeviye > mevcutSeviye) {
+                                    var sonrakiAlert = element.nextElementSibling;
+                                    if (sonrakiAlert && sonrakiAlert.classList.contains('secilen-kategori')) {
+                                        sonrakiAlert.remove();
+                                    }
+                                    element.remove();
+                                }
+                            });
+
+                            var alerts = alan.querySelectorAll('.secilen-kategori');
+                            alerts.forEach(function(alert, index) {
+                                if (index >= mevcutSeviye - 1) {
+                                    alert.remove();
+                                }
+                            });
+                        }
+
+                        // Form submit edilirken kontrol
+                        document.querySelector('form').addEventListener('submit', function(e) {
+                            var gercekKategoriInput = document.getElementById("gercekKategori");
+
+                            // Hiçbir kategori seçilmemişse hata ver
+                            if (!gercekKategoriInput.value || gercekKategoriInput.value === "") {
+                                alert('Lütfen bir kategori seçiniz!');
+                                e.preventDefault();
+                                return false;
+                            }
+
+                            console.log("Gönderilecek kategori ID:", gercekKategoriInput.value);
+                            return true;
+                        });
+                    </script>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col col-md-3">
+                    <label for="Vergi" class="form-control-label">Vergi Dilimi</label>
+                </div>
+                <div class="col-12 col-md-9">
+                    <select name="Vergi" id="Vergi" class="form-select">
+                        <option value="0">Vergi Seçiniz</option>
+                        @foreach (var item in Model.Vergilerim)
+                        {
+                            <option value="@item.Id">@item.Adi - @item.Orani %</option>
+                        }
+                    </select>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col col-md-3">
+                    <label for="Gorseller" class="form-control-label">Ürün Görselleri</label>
+                </div>
+                <div class="col-12 col-md-9">
+                    <input type="file" id="Gorseller" name="Gorseller" multiple accept="image/*" class="form-control">
+                    <small class="form-text text-muted">
+                        Desteklenen formatlar: JPG, JPEG, PNG, GIF, BMP, WEBP. Birden fazla görsel seçebilirsiniz.
+                    </small>
+                </div>
+            </div>
+
+            <div class="card-footer d-flex justify-content-end">
+                <button type="submit" class="btn btn-primary btn-md mx-3">
+                    <i class="fa fa-dot-circle-o"></i> Kaydet
+                </button>
+                <button type="reset" class="btn btn-danger btn-md" onclick="temizleForm()">
+                    <i class="fa fa-ban"></i> Sıfırla
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    // Görsel önizleme özelliği
+    document.getElementById('Gorseller').addEventListener('change', function(e) {
+        var files = e.target.files;
+        var preview = document.getElementById('gorsel-preview');
+
+        if (preview) {
+            preview.remove();
+        }
+
+        if (files.length > 0) {
+            var previewDiv = document.createElement('div');
+            previewDiv.id = 'gorsel-preview';
+            previewDiv.className = 'mt-2';
+            previewDiv.innerHTML = '<small class="text-muted">' + files.length + ' dosya seçildi:</small>';
+
+            for (var i = 0; i < Math.min(files.length, 5); i++) {
+                var fileName = document.createElement('div');
+                fileName.className = 'text-muted small';
+                fileName.textContent = '• ' + files[i].name;
+                previewDiv.appendChild(fileName);
+            }
+
+            if (files.length > 5) {
+                var moreFiles = document.createElement('div');
+                moreFiles.className = 'text-muted small';
+                moreFiles.textContent = '... ve ' + (files.length - 5) + ' dosya daha';
+                previewDiv.appendChild(moreFiles);
+            }
+
+            this.parentNode.appendChild(previewDiv);
+        }
+    });
+
+    // Sıfırla butonu fonksiyonu
+    function temizleForm() {
+        // Dinamik kategori içeriklerini temizle
+        temizleDinamikIcerik();
+
+        // Görsel önizlemesini temizle
+        var preview = document.getElementById('gorsel-preview');
+        if (preview) {
+            preview.remove();
+        }
+    }
+</script>

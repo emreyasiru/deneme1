@@ -1,0 +1,74 @@
+﻿
+@{
+    Layout = null;
+}
+@model eticaret.Modeller.UrunKayit
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>deneme</title>
+    <link rel="stylesheet" href="~/css/sb-admin-2.min.css" />
+    <link href="~/css/site.css" rel="stylesheet" />
+</head>
+<body>
+    <input />
+    <button class="btn btn-danger btn-lg">denemexx</button>
+    <div class="row mb-3">
+        <div class="col col-md-3">
+            <label for="select" class=" form-control-label">Kategori</label>
+        </div>
+        <div class="col-12 col-md-9" id="ekleme">
+            <select name="Kategori" id="kategori" class="form-select" onchange="secim()">
+                <option>Kategori Seç</option>
+                @foreach (var itemm in Model.Kategorilerim)
+                {
+                    <option value="@itemm.Id">@itemm.KategoriAdi </option>
+                }
+            </select>
+            <script>
+                 function secim(){
+                     var ekle=document.getElementById("kategori").value;
+                     var alan=document.getElementById("ekleme");
+                     $.ajax({
+                         url: "@Url.Action("deneme", "Admin")",
+                         type:"GET",
+                         data: {id: ekle},
+                         success:function (cevap){
+                             alan.innerHTML+=cevap;
+                         },
+                         error:function(xhr){
+                             console.error("ajax hatası:",xhr.responseText);
+                         }
+                     });
+                 }
+                 function secimim(){
+                     var ekle=document.getElementById("altkategori").value;
+                     var alan=document.getElementById("ekleme");
+                      $.ajax({
+                      url: "@Url.Action("deneme", "Admin")",
+                      type:"GET",
+                      data: {id: ekle},
+                      success:function (cevap){
+                          alan.innerHTML+=cevap;
+                      },
+                      error:function(xhr){
+                          console.error("ajax hatası:",xhr.responseText);
+                      }
+                  });
+
+                }
+            </script>
+        </div>
+    </div>
+    <script src="~/vendor/jquery/jquery.min.js"></script>
+    <script src="~/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="~/vendor/jquery-easing/jquery.easing.min.js"></script>
+    <script src="~/js/sb-admin-2.min.js"></script>
+    <script src="~/vendor/chart.js/Chart.min.js"></script>
+    <script src="~/js/demo/chart-area-demo.js"></script>
+    <script src="~/js/demo/chart-pie-demo.js"></script>
+
+</body>
+</html>
