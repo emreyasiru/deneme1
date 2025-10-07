@@ -39,6 +39,20 @@ namespace deneme1.Controllers
             return View();
         }
         [HttpGet]
+        public IActionResult Urundetay(int? urunid)
+        {            
+            var urun= _db.Urunlers.FirstOrDefault(x => x.Id == urunid);
+            var detaylar = _db.UrunDetays.Where(x => x.Urunid == urunid).ToList();
+            var gorseller = _db.UrunGorsels.Where(x => x.Urunid == urunid).ToList();
+            var model= new malzeme
+            {
+                Urunlerim = new List<Urunler> { urun },
+                Urundetaylarým = detaylar,
+                Urungorsellerim = gorseller
+            };
+            return View();
+        }
+        [HttpGet]
         public IActionResult magaza(int? id, string? min, string? max)
         {
             var urunler = new UrunListesi

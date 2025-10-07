@@ -146,31 +146,31 @@
                                             var bedenler = detay.Beden.Split(',');
                                             foreach (var beden in bedenler)
                                             {
-                                                                <span class="badge bg-primary me-1">@beden.Trim()</span>
+                                              <span class="badge bg-primary me-1">@beden.Trim()</span>
                                             }
                                         }
                                         else
                                         {
-                                                        <span>-</span>
+                                            <span>-</span>
                                         }
                                             </td>
                                             <td>
                                         @if (!string.IsNullOrEmpty(detay.Renk))
                                         {
-                                            var renkler = detay.Renk.Split(',');
-                                                        <div class="d-flex flex-wrap gap-1">
-                                                @foreach (var renk in renkler)
-                                                {
-                                                                    <div class="d-flex align-items-center border rounded p-1" style="background: #f8f9fa;">
-                                                                        <div style="width: 20px; height: 20px; background-color: @renk.Trim(); border: 1px solid #ccc; border-radius: 3px; margin-right: 5px;"></div>
-                                                                        <small>@renk.Trim()</small>
-                                                                    </div>
-                                                }
-                                                        </div>
+                                             var renkler = detay.Renk.Split(',');
+                                            <div class="d-flex flex-wrap gap-1">
+                                            @foreach (var renk in renkler)
+                                            {
+                                                <div class="d-flex align-items-center border rounded p-1" style="background: #f8f9fa;">
+                                                    <div style="width: 20px; height: 20px; background-color: @renk.Trim(); border: 1px solid #ccc; border-radius: 3px; margin-right: 5px;"></div>
+                                                    <small>@renk.Trim()</small>
+                                                </div>
+                                            }
+                                            </div>
                                         }
                                         else
                                         {
-                                                        <span>-</span>
+                                           <span>-</span>
                                         }
                                             </td>
                                             <td>@(detay.Boy ?? "-")</td>
