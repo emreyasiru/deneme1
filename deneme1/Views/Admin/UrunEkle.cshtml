@@ -7,18 +7,18 @@
 <div class="col">
     @if (!string.IsNullOrEmpty(ViewBag.ErrorMessage))
     {
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
             @ViewBag.ErrorMessage
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
     }
 
     @if (!string.IsNullOrEmpty(ViewBag.SuccessMessage))
     {
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
             @ViewBag.SuccessMessage
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
     }
 
     <div class="card-body">
@@ -87,7 +87,7 @@
                         <option value="">Kategori Seç</option>
                         @foreach (var itemm in Model.Kategorilerim)
                         {
-                                <option value="@itemm.Id">@itemm.KategoriAdi</option>
+                                    <option value="@itemm.Id">@itemm.KategoriAdi</option>
                         }
                     </select>
 
@@ -104,7 +104,7 @@
                         <option value="0">Vergi Seçiniz</option>
                         @foreach (var item in Model.Vergilerim)
                         {
-                                <option value="@item.Id">@item.Adi - @item.Orani %</option>
+                                    <option value="@item.Id">@item.Adi - @item.Orani %</option>
                         }
                     </select>
                 </div>
@@ -115,10 +115,19 @@
                     <label for="Gorseller" class="form-control-label">Ürün Görselleri</label>
                 </div>
                 <div class="col-12 col-md-9">
-                    <input type="file" id="Gorseller" name="Gorseller" multiple accept="image/*" class="form-control">
+                    <input type="file" id="Gorseller" name="Gorseller" multiple accept="image/*" class="form-control" onchange="gorselleriGoster()">
                     <small class="form-text text-muted">
                         Desteklenen formatlar: JPG, JPEG, PNG, GIF, BMP, WEBP. Birden fazla görsel seçebilirsiniz.
                     </small>
+
+                    <!-- Seçilen görsellerin önizlemesi -->
+                    <div id="gorselOnizleme" class="mt-3" style="display: none;">
+                        <label class="form-label fw-bold">Seçilen Görseller (Ana görseli seçmek için tıklayın):</label>
+                        <div id="gorselListesi" class="d-flex flex-wrap gap-2"></div>
+                    </div>
+
+                    <!-- Ana görsel index'i gizli input olarak gönder -->
+                    <input type="hidden" id="AnaGorselIndex" name="AnaGorselIndex" value="0">
                 </div>
             </div>
 
@@ -134,10 +143,64 @@
     </div>
 </div>
 
-<script>
-    // Global değişken - en son seçilen kategori ID'sini tutar
-    let enSonSecilenKategori = "";
+<style>
+    .gorsel-onizleme-item {
+        position: relative;
+        width: 120px;
+        height: 120px;
+        border: 3px solid #ddd;
+        border-radius: 8px;
+        overflow: hidden;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
 
+    .gorsel-onizleme-item:hover {
+        transform: scale(1.05);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+
+    .gorsel-onizleme-item.ana-gorsel {
+        border-color: #28a745;
+        border-width: 4px;
+    }
+
+    .gorsel-onizleme-item img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .gorsel-onizleme-item .ana-gorsel-badge {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        background: #28a745;
+        color: white;
+        padding: 2px 8px;
+        border-radius: 4px;
+        font-size: 11px;
+        font-weight: bold;
+    }
+
+    .gorsel-onizleme-item .gorsel-sira {
+        position: absolute;
+        bottom: 5px;
+        left: 5px;
+        background: rgba(0,0,0,0.7);
+        color: white;
+        padding: 2px 8px;
+        border-radius: 4px;
+        font-size: 12px;
+    }
+</style>
+
+<script>
+    // Global değişkenler
+    let enSonSecilenKategori = "";
+    let secilenAnaGorselIndex = 0;
+
+    // Kategori fonksiyonları
     function secim() {
         var ekle = document.getElementById("kategori").value;
         var alan = document.getElementById("ekleme");
@@ -230,6 +293,71 @@
         });
     }
 
+    // Görsel önizleme fonksiyonları
+    function gorselleriGoster() {
+        const fileInput = document.getElementById('Gorseller');
+        const onizlemeAlani = document.getElementById('gorselOnizleme');
+        const gorselListesi = document.getElementById('gorselListesi');
+        const files = fileInput.files;
+
+        // Temizle
+        gorselListesi.innerHTML = '';
+
+        if (files.length === 0) {
+            onizlemeAlani.style.display = 'none';
+            return;
+        }
+
+        onizlemeAlani.style.display = 'block';
+        secilenAnaGorselIndex = 0; // İlk görseli varsayılan olarak seç
+        document.getElementById('AnaGorselIndex').value = 0;
+
+        // Her görsel için önizleme oluştur
+        for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+            const reader = new FileReader();
+
+            reader.onload = function(e) {
+                const div = document.createElement('div');
+                div.className = 'gorsel-onizleme-item' + (i === 0 ? ' ana-gorsel' : '');
+                div.setAttribute('data-index', i);
+                div.onclick = function() { anaGorselSec(i); };
+
+                div.innerHTML = `
+                    <img src="${e.target.result}" alt="Görsel ${i + 1}">
+                    <span class="gorsel-sira">${i + 1}</span>
+                    ${i === 0 ? '<span class="ana-gorsel-badge">ANA GÖRSEL</span>' : ''}
+                `;
+
+                gorselListesi.appendChild(div);
+            };
+
+            reader.readAsDataURL(file);
+        }
+    }
+
+    function anaGorselSec(index) {
+        secilenAnaGorselIndex = index;
+        document.getElementById('AnaGorselIndex').value = index;
+
+        // Tüm görsellerden ana-gorsel class'ını kaldır
+        document.querySelectorAll('.gorsel-onizleme-item').forEach(item => {
+            item.classList.remove('ana-gorsel');
+            const badge = item.querySelector('.ana-gorsel-badge');
+            if (badge) badge.remove();
+        });
+
+        // Seçilen görsele ana-gorsel class'ı ekle
+        const secilenItem = document.querySelector(`[data-index="${index}"]`);
+        if (secilenItem) {
+            secilenItem.classList.add('ana-gorsel');
+            const badge = document.createElement('span');
+            badge.className = 'ana-gorsel-badge';
+            badge.textContent = 'ANA GÖRSEL';
+            secilenItem.appendChild(badge);
+        }
+    }
+
     // Form submit edilirken kontrol
     document.querySelector('form').addEventListener('submit', function(e) {
         var gercekKategoriInput = document.getElementById("gercekKategori");
@@ -250,5 +378,11 @@
         temizleDinamikIcerik();
         document.getElementById('gercekKategori').value = '';
         enSonSecilenKategori = '';
+
+        // Görsel önizlemesini temizle
+        document.getElementById('gorselOnizleme').style.display = 'none';
+        document.getElementById('gorselListesi').innerHTML = '';
+        document.getElementById('AnaGorselIndex').value = '0';
+        secilenAnaGorselIndex = 0;
     }
 </script>

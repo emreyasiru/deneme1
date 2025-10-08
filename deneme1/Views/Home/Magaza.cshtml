@@ -274,17 +274,17 @@
                                 <i class="fa fa-star"></i>
                             </div>
 
-                            <div class="product__price">
-                                            @if (urun.IndirimliFiyat > 0)
-                                            {
-                                                @urun.IndirimliFiyat
-                                        <span>@urun.Satis.</span>
-                                            }
-                                            else
-                                            {
-                                                @urun.Satis
-                                            }
-                            </div>
+                                   <div class="product__price">
+                                    @if (urun.IndirimliFiyat > 0)
+                                    {
+                                        @:$@urun.IndirimliFiyat
+                                        <span>$@urun.Satis</span>
+                                    }
+                                    else
+                                    {
+                                        @:$@urun.Satis
+                                    }
+                                     </div>
                         </div>
                     </div>
                 </div>
