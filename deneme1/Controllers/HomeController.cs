@@ -131,24 +131,43 @@ namespace deneme1.Controllers
                 ViewBag.BreadcrumbKategoriler = new List<string> { "Tüm Ürünler" };
             }
 
-            // Fiyat filtresi
-            if (!string.IsNullOrEmpty(min) && !string.IsNullOrEmpty(max))
+            if (!string.IsNullOrWhiteSpace(min) && !string.IsNullOrWhiteSpace(max))
             {
-                var decimalMin = Convert.ToDecimal(min.Replace("$", ""));
-                var decimalMax = Convert.ToDecimal(max.Replace("$", ""));
-
-                // Ýndirimli fiyat varsa onu kullan, yoksa normal satýþ fiyatýný kullan
-                urunQuery = urunQuery.Where(x =>
-                    (x.IndirimliFiyat.HasValue ? x.IndirimliFiyat.Value : x.Satis) >= decimalMin &&
-                    (x.IndirimliFiyat.HasValue ? x.IndirimliFiyat.Value : x.Satis) <= decimalMax
-                );
-
-                // Breadcrumb'a fiyat bilgisini ekle
-                if (ViewBag.BreadcrumbKategoriler == null)
+                try
                 {
-                    ViewBag.BreadcrumbKategoriler = new List<string>();
+                    // $ iþaretini ve boþluklarý temizle
+                    var temizMin = min.Replace("$", "").Replace(" ", "").Replace(",", "").Trim();
+                    var temizMax = max.Replace("$", "").Replace(" ", "").Replace(",", "").Trim();
+                    if (decimal.TryParse(temizMin, System.Globalization.NumberStyles.Any,
+                        System.Globalization.CultureInfo.InvariantCulture, out decimal decimalMin) &&
+                        decimal.TryParse(temizMax, System.Globalization.NumberStyles.Any,
+                        System.Globalization.CultureInfo.InvariantCulture, out decimal decimalMax))
+                    {
+                       
+
+                        // Ýndirimli fiyat varsa onu kullan, yoksa normal satýþ fiyatýný kullan
+                        urunQuery = urunQuery.Where(x =>
+                            ((x.IndirimliFiyat.HasValue && x.IndirimliFiyat.Value > 0)
+                                ? x.IndirimliFiyat.Value
+                                : x.Satis) >= decimalMin &&
+                            ((x.IndirimliFiyat.HasValue && x.IndirimliFiyat.Value > 0)
+                                ? x.IndirimliFiyat.Value
+                                : x.Satis) <= decimalMax
+                        );
+
+                        // Breadcrumb'a fiyat bilgisini ekle
+                        if (ViewBag.BreadcrumbKategoriler == null)
+                        {
+                            ViewBag.BreadcrumbKategoriler = new List<string>();
+                        }
+                        ((List<string>)ViewBag.BreadcrumbKategoriler).Add($"${decimalMin:N2} - ${decimalMax:N2}");
+                    }
+                    
                 }
-                ((List<string>)ViewBag.BreadcrumbKategoriler).Add($"${decimalMin} - ${decimalMax}");
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Fiyat filtresi hatasý: {ex.Message}");
+                }
             }
 
             urunler.Urunlerim = urunQuery.ToList();
