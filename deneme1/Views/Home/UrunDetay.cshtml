@@ -2,38 +2,47 @@
 @{
     ViewData["Title"] = "UrunDetay";
     Layout = "~/Views/Shared/_Home.cshtml";
+    int i = 0;
+    int k = 0;
 }
 @model eticaret.Modeller.malzeme
-    <!-- Product Details Section Begin -->
-    <section class="product-details spad">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-6">
-                    <div class="product__details__pic">
-                        <div class="product__details__pic__left product__thumb nice-scroll">
-                            <a class="pt active" href="#product-1">
-                                <img src="img/product/details/thumb-1.jpg" alt="">
-                            </a>
-                            <a class="pt" href="#product-2">
-                                <img src="img/product/details/thumb-2.jpg" alt="">
-                            </a>
-                            <a class="pt" href="#product-3">
-                                <img src="img/product/details/thumb-3.jpg" alt="">
-                            </a>
-                            <a class="pt" href="#product-4">
-                                <img src="img/product/details/thumb-4.jpg" alt="">
-                            </a>
-                        </div>
-                        <div class="product__details__slider__content">
-                            <div class="product__details__pic__slider owl-carousel">
-                                <img data-hash="product-1" class="product__big__img" src="img/product/details/product-1.jpg" alt="">
-                                <img data-hash="product-2" class="product__big__img" src="img/product/details/product-3.jpg" alt="">
-                                <img data-hash="product-3" class="product__big__img" src="img/product/details/product-2.jpg" alt="">
-                                <img data-hash="product-4" class="product__big__img" src="img/product/details/product-4.jpg" alt="">
-                            </div>
+<!-- Product Details Section Begin -->
+<section class="product-details spad">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="product__details__pic">
+                    <div class="product__details__pic__left product__thumb nice-scroll">
+                        @foreach (var resim in Model.Urungorsellerim.OrderByDescending(x => x.Baslangic))
+                        {
+                            i++;
+                            var urunId = Model.Urunlerim.First().Id;
+                            if (resim.Baslangic == true)
+                            {
+                                        <a class="pt active" href="#product-@i">
+                                            <img src="@Url.Content("~/uploads/urunler/" + urunId + "/" + resim.Ad)" alt="">
+                                        </a>
+                            }
+                            else
+                            {
+                                        <a class="pt" href="#product-@i">
+                                            <img src="@Url.Content("~/uploads/urunler/" + urunId + "/" + resim.Ad)" alt="">
+                                        </a>
+                            }
+                        }
+                    </div>
+                    <div class="product__details__slider__content">
+                        <div class="product__details__pic__slider owl-carousel">
+                            @foreach (var yeni in Model.Urungorsellerim.OrderByDescending(x => x.Baslangic))
+                            {
+                                k++;
+                                var urunId = Model.Urunlerim.First().Id;
+                                    <img data-hash="product-@k" class="product__big__img" src="@Url.Content("~/uploads/urunler/" + urunId + "/" + yeni.Ad)" alt="">
+                            }
                         </div>
                     </div>
                 </div>
+            </div>
                 <div class="col-lg-6">
                     <div class="product__details__text">
                         <h3>Essential structured blazer <span>Brand: SKMEIMore Men Watches from SKMEI</span></h3>

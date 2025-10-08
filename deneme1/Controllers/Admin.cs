@@ -200,8 +200,8 @@ namespace eticaret.Controllers
         }
         [HttpPost]
         public async Task<IActionResult> UrunEkle(string UrunAdi, string StokAdeti, string Aciklama,
-        string AlisFiyati, string SatisFiyati, string IndirimliFiyat, int GercekKategori, int Vergi,
-        List<IFormFile> Gorseller)
+    string AlisFiyati, string SatisFiyati, string IndirimliFiyat, int GercekKategori,
+    int Vergi, List<IFormFile> Gorseller, int AnaGorselIndex = 0)
         {
             var userId = HttpContext.Session.GetInt32("UserId");
             if (userId == null)
@@ -211,6 +211,25 @@ namespace eticaret.Controllers
 
             try
             {
+                // DEBUG
+                Console.WriteLine("=== ÜRÜN EKLEME BAŞLADI ===");
+                Console.WriteLine($"Ürün Adı: {UrunAdi}");
+                Console.WriteLine($"Görsel Sayısı: {Gorseller?.Count ?? 0}");
+                Console.WriteLine($"Ana Görsel Index: {AnaGorselIndex}");
+
+                if (Gorseller != null && Gorseller.Count > 0)
+                {
+                    for (int i = 0; i < Gorseller.Count; i++)
+                    {
+                        Console.WriteLine($"  Görsel {i}: {Gorseller[i]?.FileName} - {Gorseller[i]?.Length ?? 0} bytes");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("  !!! GÖRSEL GELMEDİ !!!");
+                }
+
+                // Validasyonlar
                 if (string.IsNullOrEmpty(UrunAdi))
                 {
                     ViewBag.ErrorMessage = "Ürün adı zorunludur!";
@@ -223,9 +242,8 @@ namespace eticaret.Controllers
                     return await UrunEklePageReturn();
                 }
 
-                // Kategori ID'sinin geçerli olup olmadığını kontrol et
                 bool kategoriMevcut = await _db.AnaKategoris.AnyAsync(x => x.Id == GercekKategori) ||
-                                     await _db.AltKategoris.AnyAsync(x => x.Id == GercekKategori);
+                                      await _db.AltKategoris.AnyAsync(x => x.Id == GercekKategori);
 
                 if (!kategoriMevcut)
                 {
@@ -233,23 +251,40 @@ namespace eticaret.Controllers
                     return await UrunEklePageReturn();
                 }
 
+                // Fiyat ve stok parse işlemleri
                 decimal alis = 0, satis = 0, indirimli = 0;
                 int stok = 0;
 
-                if (!string.IsNullOrEmpty(AlisFiyati))
-                    decimal.TryParse(AlisFiyati.Replace(".", ","), out alis);
-                if (!string.IsNullOrEmpty(SatisFiyati))
-                    decimal.TryParse(SatisFiyati.Replace(".", ","), out satis);
-                if (!string.IsNullOrEmpty(IndirimliFiyat))
-                    decimal.TryParse(IndirimliFiyat.Replace(".", ","), out indirimli);
-                if (!string.IsNullOrEmpty(StokAdeti))
+                if (!string.IsNullOrWhiteSpace(AlisFiyati))
+                {
+                    var temizAlis = AlisFiyati.Replace(",", ".").Trim();
+                    decimal.TryParse(temizAlis, System.Globalization.NumberStyles.Any,
+                        System.Globalization.CultureInfo.InvariantCulture, out alis);
+                }
+
+                if (!string.IsNullOrWhiteSpace(SatisFiyati))
+                {
+                    var temizSatis = SatisFiyati.Replace(",", ".").Trim();
+                    decimal.TryParse(temizSatis, System.Globalization.NumberStyles.Any,
+                        System.Globalization.CultureInfo.InvariantCulture, out satis);
+                }
+
+                if (!string.IsNullOrWhiteSpace(IndirimliFiyat))
+                {
+                    var temizIndirimli = IndirimliFiyat.Replace(",", ".").Trim();
+                    decimal.TryParse(temizIndirimli, System.Globalization.NumberStyles.Any,
+                        System.Globalization.CultureInfo.InvariantCulture, out indirimli);
+                }
+
+                if (!string.IsNullOrWhiteSpace(StokAdeti))
                     int.TryParse(StokAdeti, out stok);
 
+                // Yeni ürün oluştur
                 var yeniUrun = new Urunler
                 {
                     UrunAdi = UrunAdi.Trim(),
                     Stok = stok,
-                    KategoriId = GercekKategori, // Artık doğru kategori ID'si kullanılıyor
+                    KategoriId = GercekKategori,
                     Alis = alis,
                     Satis = satis,
                     IndirimliFiyat = indirimli,
@@ -260,9 +295,24 @@ namespace eticaret.Controllers
                 _db.Urunlers.Add(yeniUrun);
                 await _db.SaveChangesAsync();
 
+                Console.WriteLine($"Ürün kaydedildi - ID: {yeniUrun.Id}");
+
+                // Görselleri kaydet
                 if (Gorseller != null && Gorseller.Count > 0)
                 {
-                    await GorselleriKaydet(yeniUrun.Id, Gorseller);
+                    Console.WriteLine("Görseller kaydediliyor...");
+
+                    if (AnaGorselIndex < 0 || AnaGorselIndex >= Gorseller.Count)
+                    {
+                        AnaGorselIndex = 0;
+                    }
+
+                    await GorselleriKaydet(yeniUrun.Id, Gorseller, AnaGorselIndex);
+                    Console.WriteLine("Görseller başarıyla kaydedildi!");
+                }
+                else
+                {
+                    Console.WriteLine("!!! GÖRSEL YOK, ATLANIYOR !!!");
                 }
 
                 TempData["SuccessMessage"] = "Ürün başarıyla eklendi!";
@@ -270,90 +320,154 @@ namespace eticaret.Controllers
             }
             catch (Exception ex)
             {
+                Console.WriteLine($"!!! HATA: {ex.Message}");
+                Console.WriteLine($"Stack: {ex.StackTrace}");
                 ViewBag.ErrorMessage = $"Ürün eklenirken hata oluştu: {ex.Message}";
                 return await UrunEklePageReturn();
             }
         }
-        private async Task<IActionResult> UrunEklePageReturn()
-        {
-            var veriler = new UrunKayit
-            {
-                Vergilerim = _db.Vergis.ToList(),
-                Kategorilerim = _db.AnaKategoris.ToList()
-            };
-            return View("UrunEkle", veriler);
-        }
 
-        private async Task GorselleriKaydet(int urunId, List<IFormFile> gorseller)
+        private async Task GorselleriKaydet(int urunId, List<IFormFile> gorseller, int anaGorselIndex)
         {
             try
             {
+                Console.WriteLine($"\n=== GorselleriKaydet Başladı ===");
+                Console.WriteLine($"Ürün ID: {urunId}");
+                Console.WriteLine($"Toplam Görsel: {gorseller.Count}");
+                Console.WriteLine($"Ana Görsel Index: {anaGorselIndex}");
+
                 // Ana upload klasörünü oluştur
                 string uploadsPath = Path.Combine(_env.WebRootPath, "uploads", "urunler", urunId.ToString());
+                Console.WriteLine($"Upload Path: {uploadsPath}");
 
                 if (!Directory.Exists(uploadsPath))
                 {
                     Directory.CreateDirectory(uploadsPath);
+                    Console.WriteLine("Klasör oluşturuldu");
                 }
 
-                bool ilkGorsel = true;
+                var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".webp" };
+                int gecerliDosyaIndex = 0;
 
-                foreach (var gorsel in gorseller)
+                for (int i = 0; i < gorseller.Count; i++)
                 {
-                    if (gorsel != null && gorsel.Length > 0)
+                    var gorsel = gorseller[i];
+
+                    Console.WriteLine($"\n--- Görsel {i + 1} işleniyor ---");
+
+                    if (gorsel == null || gorsel.Length == 0)
                     {
-                        // Güvenli dosya uzantısı kontrolü
-                        var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".webp" };
-                        var fileExtension = Path.GetExtension(gorsel.FileName).ToLowerInvariant();
-
-                        if (!allowedExtensions.Contains(fileExtension))
-                        {
-                            continue; // Geçersiz uzantılı dosyaları atla
-                        }
-
-                        // Güvenli dosya adı oluştur
-                        string guvenliDosyaAdi = $"urun_{urunId}_{DateTime.Now.Ticks}{fileExtension}";
-                        string dosyaYolu = Path.Combine(uploadsPath, guvenliDosyaAdi);
-
-                        // Dosyayı kaydet
-                        using (var stream = new FileStream(dosyaYolu, FileMode.Create))
-                        {
-                            await gorsel.CopyToAsync(stream);
-                        }
-
-                        // Mevcut UrunGorsel tablonuza kaydet
-                        var urunGorsel = new UrunGorsel
-                        {
-                            Urunid = urunId,
-                            Ad = guvenliDosyaAdi, // Güvenli dosya adı
-                            Baslangic = ilkGorsel // İlk görsel ana görsel olsun
-                        };
-
-                        _db.UrunGorsels.Add(urunGorsel);
-                        ilkGorsel = false; // İkinci görselden sonra false yap
+                        Console.WriteLine("Görsel boş, atlanıyor");
+                        continue;
                     }
+
+                    Console.WriteLine($"Dosya: {gorsel.FileName}");
+                    Console.WriteLine($"Boyut: {gorsel.Length} bytes");
+
+                    var fileExtension = Path.GetExtension(gorsel.FileName).ToLowerInvariant();
+                    if (!allowedExtensions.Contains(fileExtension))
+                    {
+                        Console.WriteLine($"Geçersiz uzantı: {fileExtension}");
+                        continue;
+                    }
+
+                    if (gorsel.Length > 5 * 1024 * 1024)
+                    {
+                        Console.WriteLine("Dosya çok büyük (>5MB)");
+                        continue;
+                    }
+
+                    string guvenliDosyaAdi = $"urun_{urunId}_{DateTime.Now.Ticks}_{i}{fileExtension}";
+                    string dosyaYolu = Path.Combine(uploadsPath, guvenliDosyaAdi);
+
+                    Console.WriteLine($"Kaydedilecek: {guvenliDosyaAdi}");
+
+                    // Dosyayı kaydet
+                    using (var stream = new FileStream(dosyaYolu, FileMode.Create))
+                    {
+                        await gorsel.CopyToAsync(stream);
+                    }
+
+                    Console.WriteLine("Dosya fiziksel olarak kaydedildi");
+
+                    bool anaGorselMi = (gecerliDosyaIndex == anaGorselIndex);
+                    Console.WriteLine($"Ana görsel mi?: {anaGorselMi} (Index: {gecerliDosyaIndex} == {anaGorselIndex})");
+
+                    // Veritabanına kaydet
+                    var urunGorsel = new UrunGorsel
+                    {
+                        Urunid = urunId,
+                        Ad = guvenliDosyaAdi,
+                        Baslangic = anaGorselMi
+                    };
+
+                    _db.UrunGorsels.Add(urunGorsel);
+                    Console.WriteLine($"DB'ye eklendi - Baslangic: {anaGorselMi}");
+
+                    gecerliDosyaIndex++;
                 }
 
-                _db.SaveChanges();
+                Console.WriteLine($"\nToplam {gecerliDosyaIndex} görsel işlendi");
+                Console.WriteLine("SaveChangesAsync çağrılıyor...");
+
+                await _db.SaveChangesAsync();
+
+                Console.WriteLine("SaveChanges BAŞARILI!");
+
+                // Kontrol için kayıtları listele
+                var kaydedilenler = await _db.UrunGorsels.Where(x => x.Urunid == urunId).ToListAsync();
+                Console.WriteLine($"\nKaydedilen görsel sayısı: {kaydedilenler.Count}");
+                foreach (var g in kaydedilenler)
+                {
+                    Console.WriteLine($"  ID: {g.Id}, Ad: {g.Ad}, Baslangic: {g.Baslangic}");
+                }
             }
             catch (Exception ex)
             {
-                // Hata durumunda log ekleyebilirsiniz
+                Console.WriteLine($"\n!!! GÖRSELLERİ KAYDETME HATASI !!!");
+                Console.WriteLine($"Hata: {ex.Message}");
+                Console.WriteLine($"Stack: {ex.StackTrace}");
+
+                // Hata durumunda dosyaları temizle
+                string uploadsPath = Path.Combine(_env.WebRootPath, "uploads", "urunler", urunId.ToString());
+                if (Directory.Exists(uploadsPath))
+                {
+                    try
+                    {
+                        Directory.Delete(uploadsPath, true);
+                        Console.WriteLine("Hatalı dosyalar temizlendi");
+                    }
+                    catch (Exception deleteEx)
+                    {
+                        Console.WriteLine($"Temizleme hatası: {deleteEx.Message}");
+                    }
+                }
+
                 throw new Exception($"Görseller kaydedilirken hata: {ex.Message}");
             }
+        }
+
+        private async Task<IActionResult> UrunEklePageReturn()
+        {
+            var veriler = new UrunKayit
+            {
+                Vergilerim = await _db.Vergis.ToListAsync(),
+                Kategorilerim = await _db.AnaKategoris.ToListAsync()
+            };
+            return View("UrunEkle", veriler);
         }
 
         [HttpGet]
         public IActionResult KategoriGetir(int id)
         {
-            var gelen = _db.AltKategoris.Where(x => x.AnaKategoriId == id && x.UstKategoriId == null).ToList();
+            var gelen = _db.AltKategoris
+                .Where(x => x.AnaKategoriId == id && x.UstKategoriId == null)
+                .ToList();
 
-            // Seçilen kategorinin adını al
             var secilenKategori = _db.AnaKategoris.FirstOrDefault(x => x.Id == id);
 
             var html = "";
 
-            // Önce seçilen kategori adını göster
             if (secilenKategori != null)
             {
                 html += "<div class='alert alert-info mt-2 secilen-kategori'>";
@@ -361,14 +475,13 @@ namespace eticaret.Controllers
                 html += "</div>";
             }
 
-            // Eğer alt kategoriler varsa select oluştur
             if (gelen.Count > 0)
             {
                 html += "<select class='form-select mt-2' onchange='secimim(this)' data-seviye='2'>";
                 html += "<option value=''>Alt kategori seçiniz</option>";
                 foreach (var item in gelen)
                 {
-                    html += "<option value='" + item.Id + "'>" + item.KategoriAdi + "</option>";
+                    html += $"<option value='{item.Id}'>{item.KategoriAdi}</option>";
                 }
                 html += "</select>";
             }
@@ -380,13 +493,10 @@ namespace eticaret.Controllers
         public IActionResult AltKategoriGetir(int id)
         {
             var gelen = _db.AltKategoris.Where(x => x.UstKategoriId == id).ToList();
-
-            // Seçilen alt kategorinin adını al
             var secilenAltKategori = _db.AltKategoris.FirstOrDefault(x => x.Id == id);
 
             var html = "";
 
-            // Önce seçilen kategori adını göster
             if (secilenAltKategori != null)
             {
                 html += "<div class='alert alert-success mt-2 secilen-kategori'>";
@@ -394,21 +504,19 @@ namespace eticaret.Controllers
                 html += "</div>";
             }
 
-            // Eğer alt kategoriler varsa select oluştur
             if (gelen.Count > 0)
             {
                 html += "<select class='form-select mt-2' onchange='secimim(this)' data-seviye='3'>";
                 html += "<option value=''>Alt kategori seçiniz</option>";
                 foreach (var item in gelen)
                 {
-                    html += "<option value='" + item.Id + "'>" + item.KategoriAdi + "</option>";
+                    html += $"<option value='{item.Id}'>{item.KategoriAdi}</option>";
                 }
                 html += "</select>";
             }
 
             return Content(html, "text/html");
         }
-
         [HttpPost]
         public IActionResult KategoriEkle(string Kategori_Adi, string? altkategori, string anakategori)
         {

@@ -7,18 +7,18 @@
 <div class="col">
     @if (!string.IsNullOrEmpty(ViewBag.ErrorMessage))
     {
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
             @ViewBag.ErrorMessage
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
     }
 
     @if (!string.IsNullOrEmpty(ViewBag.SuccessMessage))
     {
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
             @ViewBag.SuccessMessage
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
     }
 
     <div class="card-body">
@@ -87,126 +87,14 @@
                         <option value="">Kategori Seç</option>
                         @foreach (var itemm in Model.Kategorilerim)
                         {
-                            <option value="@itemm.Id">@itemm.KategoriAdi</option>
+                                <option value="@itemm.Id">@itemm.KategoriAdi</option>
                         }
                     </select>
 
-                    <!-- Bu input artık form ile gönderilecek gerçek değeri tutar -->
                     <input type="hidden" name="GercekKategori" id="gercekKategori" value="">
-
-                    <script>
-                        // Global değişken - en son seçilen kategori ID'sini tutar
-                        let enSonSecilenKategori = "";
-
-                        function secim() {
-                            var ekle = document.getElementById("kategori").value;
-                            var alan = document.getElementById("ekleme");
-
-                            // Ana kategori seçildiğinde global değişkeni ve hidden input'u güncelle
-                            enSonSecilenKategori = ekle;
-                            document.getElementById("gercekKategori").value = ekle;
-
-                            // Önceki dinamik içerikleri temizle
-                            temizleDinamikIcerik();
-
-                            if (!ekle || ekle === "") {
-                                enSonSecilenKategori = "";
-                                document.getElementById("gercekKategori").value = "";
-                                return;
-                            }
-
-                            $.ajax({
-                                url: "@Url.Action("KategoriGetir", "Admin")",
-                                type: "GET",
-                                data: { id: ekle },
-                                success: function (cevap) {
-                                    alan.insertAdjacentHTML('beforeend', cevap);
-                                },
-                                error: function (xhr) {
-                                    console.error("Ajax hatası:", xhr.responseText);
-                                }
-                            });
-                        }
-
-                        function secimim(selectElement) {
-                            var ekle = selectElement.value;
-                            var alan = document.getElementById("ekleme");
-                            var mevcutSeviye = parseInt(selectElement.getAttribute('data-seviye'));
-
-                            // Alt kategori seçildiğinde global değişkeni ve hidden input'u güncelle
-                            if (ekle && ekle !== "") {
-                                enSonSecilenKategori = ekle;
-                                document.getElementById("gercekKategori").value = ekle;
-                            }
-
-                            // Bu seviyeden sonraki tüm içerikleri temizle
-                            temizleSonrakiSeviyeler(mevcutSeviye);
-
-                            if (!ekle || ekle === "") {
-                                return;
-                            }
-
-                            $.ajax({
-                                url: "@Url.Action("AltKategoriGetir", "Admin")",
-                                type: "GET",
-                                data: { id: ekle },
-                                success: function (cevap) {
-                                    alan.insertAdjacentHTML('beforeend', cevap);
-                                },
-                                error: function (xhr) {
-                                    console.error("Ajax hatası:", xhr.responseText);
-                                }
-                            });
-                        }
-
-                        function temizleDinamikIcerik() {
-                            var alan = document.getElementById("ekleme");
-                            var dinamikElementler = alan.querySelectorAll('.alert, select[data-seviye]');
-                            dinamikElementler.forEach(function(element) {
-                                element.remove();
-                            });
-                        }
-
-                        function temizleSonrakiSeviyeler(mevcutSeviye) {
-                            var alan = document.getElementById("ekleme");
-                            var sonrakiElementler = alan.querySelectorAll('select[data-seviye]');
-
-                            sonrakiElementler.forEach(function(element) {
-                                var elementSeviye = parseInt(element.getAttribute('data-seviye'));
-                                if (elementSeviye > mevcutSeviye) {
-                                    var sonrakiAlert = element.nextElementSibling;
-                                    if (sonrakiAlert && sonrakiAlert.classList.contains('secilen-kategori')) {
-                                        sonrakiAlert.remove();
-                                    }
-                                    element.remove();
-                                }
-                            });
-
-                            var alerts = alan.querySelectorAll('.secilen-kategori');
-                            alerts.forEach(function(alert, index) {
-                                if (index >= mevcutSeviye - 1) {
-                                    alert.remove();
-                                }
-                            });
-                        }
-
-                        // Form submit edilirken kontrol
-                        document.querySelector('form').addEventListener('submit', function(e) {
-                            var gercekKategoriInput = document.getElementById("gercekKategori");
-
-                            // Hiçbir kategori seçilmemişse hata ver
-                            if (!gercekKategoriInput.value || gercekKategoriInput.value === "") {
-                                alert('Lütfen bir kategori seçiniz!');
-                                e.preventDefault();
-                                return false;
-                            }
-
-                            console.log("Gönderilecek kategori ID:", gercekKategoriInput.value);
-                            return true;
-                        });
-                    </script>
                 </div>
             </div>
+
             <div class="row mb-3">
                 <div class="col col-md-3">
                     <label for="Vergi" class="form-control-label">Vergi Dilimi</label>
@@ -216,7 +104,7 @@
                         <option value="0">Vergi Seçiniz</option>
                         @foreach (var item in Model.Vergilerim)
                         {
-                            <option value="@item.Id">@item.Adi - @item.Orani %</option>
+                                <option value="@item.Id">@item.Adi - @item.Orani %</option>
                         }
                     </select>
                 </div>
@@ -247,48 +135,120 @@
 </div>
 
 <script>
-    // Görsel önizleme özelliği
-    document.getElementById('Gorseller').addEventListener('change', function(e) {
-        var files = e.target.files;
-        var preview = document.getElementById('gorsel-preview');
+    // Global değişken - en son seçilen kategori ID'sini tutar
+    let enSonSecilenKategori = "";
 
-        if (preview) {
-            preview.remove();
+    function secim() {
+        var ekle = document.getElementById("kategori").value;
+        var alan = document.getElementById("ekleme");
+
+        // Ana kategori seçildiğinde global değişkeni ve hidden input'u güncelle
+        enSonSecilenKategori = ekle;
+        document.getElementById("gercekKategori").value = ekle;
+
+        // Önceki dinamik içerikleri temizle
+        temizleDinamikIcerik();
+
+        if (!ekle || ekle === "") {
+            enSonSecilenKategori = "";
+            document.getElementById("gercekKategori").value = "";
+            return;
         }
 
-        if (files.length > 0) {
-            var previewDiv = document.createElement('div');
-            previewDiv.id = 'gorsel-preview';
-            previewDiv.className = 'mt-2';
-            previewDiv.innerHTML = '<small class="text-muted">' + files.length + ' dosya seçildi:</small>';
-
-            for (var i = 0; i < Math.min(files.length, 5); i++) {
-                var fileName = document.createElement('div');
-                fileName.className = 'text-muted small';
-                fileName.textContent = '• ' + files[i].name;
-                previewDiv.appendChild(fileName);
+        $.ajax({
+            url: "@Url.Action("KategoriGetir", "Admin")",
+            type: "GET",
+            data: { id: ekle },
+            success: function (cevap) {
+                alan.insertAdjacentHTML('beforeend', cevap);
+            },
+            error: function (xhr) {
+                console.error("Ajax hatası:", xhr.responseText);
             }
+        });
+    }
 
-            if (files.length > 5) {
-                var moreFiles = document.createElement('div');
-                moreFiles.className = 'text-muted small';
-                moreFiles.textContent = '... ve ' + (files.length - 5) + ' dosya daha';
-                previewDiv.appendChild(moreFiles);
-            }
+    function secimim(selectElement) {
+        var ekle = selectElement.value;
+        var alan = document.getElementById("ekleme");
+        var mevcutSeviye = parseInt(selectElement.getAttribute('data-seviye'));
 
-            this.parentNode.appendChild(previewDiv);
+        // Alt kategori seçildiğinde global değişkeni ve hidden input'u güncelle
+        if (ekle && ekle !== "") {
+            enSonSecilenKategori = ekle;
+            document.getElementById("gercekKategori").value = ekle;
         }
+
+        // Bu seviyeden sonraki tüm içerikleri temizle
+        temizleSonrakiSeviyeler(mevcutSeviye);
+
+        if (!ekle || ekle === "") {
+            return;
+        }
+
+        $.ajax({
+            url: "@Url.Action("AltKategoriGetir", "Admin")",
+            type: "GET",
+            data: { id: ekle },
+            success: function (cevap) {
+                alan.insertAdjacentHTML('beforeend', cevap);
+            },
+            error: function (xhr) {
+                console.error("Ajax hatası:", xhr.responseText);
+            }
+        });
+    }
+
+    function temizleDinamikIcerik() {
+        var alan = document.getElementById("ekleme");
+        var dinamikElementler = alan.querySelectorAll('.alert, select[data-seviye]');
+        dinamikElementler.forEach(function(element) {
+            element.remove();
+        });
+    }
+
+    function temizleSonrakiSeviyeler(mevcutSeviye) {
+        var alan = document.getElementById("ekleme");
+        var sonrakiElementler = alan.querySelectorAll('select[data-seviye]');
+
+        sonrakiElementler.forEach(function(element) {
+            var elementSeviye = parseInt(element.getAttribute('data-seviye'));
+            if (elementSeviye > mevcutSeviye) {
+                var sonrakiAlert = element.nextElementSibling;
+                if (sonrakiAlert && sonrakiAlert.classList.contains('secilen-kategori')) {
+                    sonrakiAlert.remove();
+                }
+                element.remove();
+            }
+        });
+
+        var alerts = alan.querySelectorAll('.secilen-kategori');
+        alerts.forEach(function(alert, index) {
+            if (index >= mevcutSeviye - 1) {
+                alert.remove();
+            }
+        });
+    }
+
+    // Form submit edilirken kontrol
+    document.querySelector('form').addEventListener('submit', function(e) {
+        var gercekKategoriInput = document.getElementById("gercekKategori");
+
+        // Hiçbir kategori seçilmemişse hata ver
+        if (!gercekKategoriInput.value || gercekKategoriInput.value === "") {
+            alert('Lütfen bir kategori seçiniz!');
+            e.preventDefault();
+            return false;
+        }
+
+        return true;
     });
 
     // Sıfırla butonu fonksiyonu
     function temizleForm() {
         // Dinamik kategori içeriklerini temizle
         temizleDinamikIcerik();
-
-        // Görsel önizlemesini temizle
-        var preview = document.getElementById('gorsel-preview');
-        if (preview) {
-            preview.remove();
-        }
+        document.getElementById('gercekKategori').value = '';
+        enSonSecilenKategori = '';
     }
 </script>

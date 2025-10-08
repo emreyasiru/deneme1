@@ -40,7 +40,11 @@ namespace deneme1.Controllers
         }
         [HttpGet]
         public IActionResult Urundetay(int? urunid)
-        {            
+        {
+            if (urunid == null)
+            {
+                return RedirectToAction("Magaza","Home");
+            }
             var urun= _db.Urunlers.FirstOrDefault(x => x.Id == urunid);
             var detaylar = _db.UrunDetays.Where(x => x.Urunid == urunid).ToList();
             var gorseller = _db.UrunGorsels.Where(x => x.Urunid == urunid).ToList();
@@ -50,7 +54,7 @@ namespace deneme1.Controllers
                 Urundetaylarým = detaylar,
                 Urungorsellerim = gorseller
             };
-            return View();
+            return View(model);
         }
         [HttpGet]
         public IActionResult magaza(int? id, string? min, string? max)
