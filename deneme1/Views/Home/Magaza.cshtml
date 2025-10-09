@@ -237,35 +237,36 @@
                         // Görsel varsa ürünü göster
                         if (resim != null)
                         {
-                <div class="col-lg-4 col-md-6">
-                    <div class="product__item">
-                        <div class="product__item__pic set-bg"
-                             data-setbg="@Url.Content("~/uploads/urunler/" + urun.Id + "/" + resim.Ad)">
-                            <div class="label new">New</div>
-                            <ul class="product__hover">
-                                <li>
-                                    <a href="@Url.Content("~/uploads/urunler/" + urun.Id + "/" + resim.Ad)"
-                                       class="image-popup">
-                                        <span class="arrow_expand"></span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="#"><span class="icon_heart_alt"></span></a>
-                                </li>
-                                <li>
-                                    <a href="#"><span class="icon_bag_alt"></span></a>
-                                </li>
-                            </ul>
-                        </div>
-
-                        <div class="product__item__text">
-                            <h6>
-                                <a asp-action="UrunDetay"
-                                   asp-controller="Home"
-                                   asp-route-urunid="@urun.Id">@urun.UrunAdi
-                                </a>
-                            </h6>
-
+                        <div class="col-lg-4 col-md-6">
+                         <div class="product__item">
+                            <div class="product__item__pic set-bg"
+                              data-setbg="@Url.Content("~/uploads/urunler/" + urun.Id + "/" + resim.Ad)"
+                              style="position: relative; cursor: pointer;"
+                              onclick="window.location.href='@Url.Action("UrunDetay", "Home", new { urunid = urun.Id })'">
+                             <div class="label new" style="pointer-events: none;">New</div>
+                             <ul class="product__hover">
+                                 <li>
+                                     <a href="@Url.Content("~/uploads/urunler/" + urun.Id + "/" + resim.Ad)"
+                                        class="image-popup"
+                                        onclick="event.stopPropagation();">
+                                         <span class="arrow_expand"></span>
+                                     </a>
+                                 </li>
+                                 <li>
+                                     <a href="#" onclick="event.stopPropagation();"><span class="icon_heart_alt"></span></a>
+                                 </li>
+                                 <li>
+                                     <a href="#" onclick="event.stopPropagation();"><span class="icon_bag_alt"></span></a>
+                                 </li>
+                             </ul>
+                         </div>
+                 <div class="product__item__text">
+                     <h6>
+                         <a asp-action="UrunDetay"
+                            asp-controller="Home"
+                            asp-route-urunid="@urun.Id">@urun.UrunAdi
+                         </a>
+                     </h6>
                             <div class="rating">
                                 <i class="fa fa-star"></i>
                                 <i class="fa fa-star"></i>
