@@ -19,15 +19,15 @@
                             var urunId = Model.Urunlerim.First().Id;
                             if (resim.Baslangic == true)
                             {
-                                        <a class="pt active" href="#product-@i">
-                                            <img src="@Url.Content("~/uploads/urunler/" + urunId + "/" + resim.Ad)" alt="">
-                                        </a>
+                                <a class="pt active" href="#product-@i">
+                                    <img src="@Url.Content("~/uploads/urunler/" + urunId + "/" + resim.Ad)" alt="">
+                                </a>
                             }
                             else
                             {
-                                        <a class="pt" href="#product-@i">
-                                            <img src="@Url.Content("~/uploads/urunler/" + urunId + "/" + resim.Ad)" alt="">
-                                        </a>
+                                <a class="pt" href="#product-@i">
+                                    <img src="@Url.Content("~/uploads/urunler/" + urunId + "/" + resim.Ad)" alt="">
+                                </a>
                             }
                         }
                     </div>
@@ -37,24 +37,47 @@
                             {
                                 k++;
                                 var urunId = Model.Urunlerim.First().Id;
-                                    <img data-hash="product-@k" class="product__big__img" src="@Url.Content("~/uploads/urunler/" + urunId + "/" + yeni.Ad)" alt="">
+                                <img data-hash="product-@k" class="product__big__img" src="@Url.Content("~/uploads/urunler/" + urunId + "/" + yeni.Ad)" alt="">
                             }
                         </div>
                     </div>
                 </div>
             </div>
-                <div class="col-lg-6">
-                    <div class="product__details__text">
-                        <h3>Essential structured blazer <span>Brand: SKMEIMore Men Watches from SKMEI</span></h3>
-                        <div class="rating">
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <i class="fa fa-star"></i>
-                            <span>( 138 reviews )</span>
-                        </div>
-                        <div class="product__details__price">$ 75.0 <span>$ 83.0</span></div>
+            <div class="col-lg-6">
+                <div class="product__details__text">
+                    <h3>
+                        @foreach (var urun in Model.Urunlerim)
+                        {
+                            @urun.UrunAdi
+                        }
+                        <span>
+                            Marka:&nbsp;@foreach (var marka in Model.Urundetaylarım)
+                            {
+                                @marka.Marka
+                            }
+                        </span>
+                    </h3>
+                    <div class="rating">
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                        <span>( 138 reviews )</span>
+                    </div>
+                    <div class="product__details__price">                           
+                        @foreach (var fiyat in Model.Urunlerim)
+                        { 
+                            if (fiyat.IndirimliFiyat > 0) 
+                            {
+                                @:$@fiyat.IndirimliFiyat
+                                <span>$@fiyat.Satis</span>
+                            }
+                            else{                           
+                                @:$@fiyat.Satis                              
+                            }				
+						}                           
+                            </div>
                         <p>Nemo enim ipsam voluptatem quia aspernatur aut odit aut loret fugit, sed quia consequuntur
                         magni lores eos qui ratione voluptatem sequi nesciunt.</p>
                         <div class="product__details__button">
