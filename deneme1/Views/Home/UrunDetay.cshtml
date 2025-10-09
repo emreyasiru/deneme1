@@ -77,17 +77,18 @@
                                 @:$@fiyat.Satis                              
                             }				
 						}                           
-                            </div>
-                        <p>Nemo enim ipsam voluptatem quia aspernatur aut odit aut loret fugit, sed quia consequuntur
-                        magni lores eos qui ratione voluptatem sequi nesciunt.</p>
+                     </div>
+					@foreach (var acıklama in Model.Urunlerim){
+                        <p>@acıklama.Aciklama</p>
+                    }
                         <div class="product__details__button">
                             <div class="quantity">
-                                <span>Quantity:</span>
+                                <span>Adet:</span>
                                 <div class="pro-qty">
                                     <input type="text" value="1">
                                 </div>
                             </div>
-                            <a href="#" class="cart-btn"><span class="icon_bag_alt"></span> Add to cart</a>
+                            <a href="#" class="cart-btn"><span class="icon_bag_alt"></span>Sepete Ekle</a>
                             <ul>
                                 <li><a href="#"><span class="icon_heart_alt"></span></a></li>
                                 <li><a href="#"><span class="icon_adjust-horiz"></span></a></li>
@@ -95,16 +96,7 @@
                         </div>
                         <div class="product__details__widget">
                             <ul>
-                                <li>
-                                    <span>Availability:</span>
-                                    <div class="stock__checkbox">
-                                        <label for="stockin">
-                                            In Stock
-                                            <input type="checkbox" id="stockin">
-                                            <span class="checkmark"></span>
-                                        </label>
-                                    </div>
-                                </li>
+                               
                                 <li>
                                     <span>Available color:</span>
                                     <div class="color__checkbox">
