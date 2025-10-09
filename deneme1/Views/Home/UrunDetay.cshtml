@@ -76,43 +76,40 @@
                             else{                           
                                 @:$@fiyat.Satis                              
                             }				
-						}                           
-                     </div>
-					@foreach (var acıklama in Model.Urunlerim){
+                        }                           
+                    </div>
+                    @foreach (var acıklama in Model.Urunlerim){
                         <p>@acıklama.Aciklama</p>
                     }
-                        <div class="product__details__button">
-                            <div class="quantity">
-                                <span>Adet:</span>
-                                <div class="pro-qty">
-                                    <input type="text" value="1">
-                                </div>
+                    <div class="product__details__button">
+                        <div class="quantity">
+                            <span>Adet:</span>
+                            <div class="pro-qty">
+                                <input type="text" value="1">
                             </div>
-                            <a href="#" class="cart-btn"><span class="icon_bag_alt"></span>Sepete Ekle</a>
-                            <ul>
-                                <li><a href="#"><span class="icon_heart_alt"></span></a></li>
-                                <li><a href="#"><span class="icon_adjust-horiz"></span></a></li>
-                            </ul>
                         </div>
-                        <div class="product__details__widget">
-                            <ul>
-                               
-                                <li>
-                                    <span>Available color:</span>
+                        <a href="#" class="cart-btn"><span class="icon_bag_alt"></span>Sepete Ekle</a>
+                        <ul>
+                            <li><a href="#"><span class="icon_heart_alt"></span></a></li>
+                            <li><a href="#"><span class="icon_adjust-horiz"></span></a></li>
+                        </ul>
+                    </div>
+                    <div class="product__details__widget">
+                        <ul>                            
+                            <li>
+                                <span>Mevcut renk:</span>
+                                @foreach(var renklerim in Model.Urundetaylarım)
+                                {
+                                    var renk = renklerim.Renk;
+									var renkler = renk.Split(',');
+
                                     <div class="color__checkbox">
-                                        <label for="red">
-                                            <input type="radio" name="color__radio" id="red" checked>
+                                            <label for="@renkler">
+                                            <input type="radio" name="color__radio" id="@renkler" checked>
                                             <span class="checkmark"></span>
-                                        </label>
-                                        <label for="black">
-                                            <input type="radio" name="color__radio" id="black">
-                                            <span class="checkmark black-bg"></span>
-                                        </label>
-                                        <label for="grey">
-                                            <input type="radio" name="color__radio" id="grey">
-                                            <span class="checkmark grey-bg"></span>
-                                        </label>
-                                    </div>
+                                        </label>                                        
+                                    </div>                                   
+                                    }
                                 </li>
                                 <li>
                                     <span>Available size:</span>
