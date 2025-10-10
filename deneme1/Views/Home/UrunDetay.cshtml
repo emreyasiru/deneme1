@@ -37,7 +37,7 @@
 							{
 								k++;
 								var urunId = Model.Urunlerim.First().Id;
-											<img data-hash="product-@k" class="product__big__img" src="@Url.Content("~/uploads/urunler/" + urunId + "/" + yeni.Ad)" alt="">
+								<img data-hash="product-@k" class="product__big__img" src="@Url.Content("~/uploads/urunler/" + urunId + "/" + yeni.Ad)" alt="">
 							}
 						</div>
 					</div>
@@ -81,7 +81,7 @@
 					</div>
 					@foreach (var acıklama in Model.Urunlerim)
 					{
-										<p>@acıklama.Aciklama</p>
+						<p>@acıklama.Aciklama</p>
 					}
 					<div class="product__details__button">
 						<div class="quantity">
@@ -102,9 +102,9 @@
 							{
 								var renk = renklerim.Renk;
 								var renkler = renk.Split(',');                       
-										<li>
-											<span>Mevcut Renk:</span>                                
-											<div class="color__checkbox">
+								<li>
+									<span>Mevcut Renk:</span>                                
+									<div class="color__checkbox">
 										@for (int p = 0; p < renkler.Length; p++)
 										{
 											var temizRenk = renkler[p].Trim();
@@ -113,31 +113,28 @@
 												<input type="radio" name="color__radio" id="@renkId" @(p == 0 ? "checked" : "")>
 												<span class="checkmark" style="background-color:@temizRenk;"></span>
 											</label>
-					                     }                                        
-								</div>                                   
-							</li>
-							}
-									<li>
-									<span>Available size:</span>
-									<div class="size__btn">
-										<label for="xs-btn" class="active">
-											<input type="radio" id="xs-btn">
-											xs
-										</label>
-										<label for="s-btn">
-											<input type="radio" id="s-btn">
-											s
-										</label>
-										<label for="m-btn">
-											<input type="radio" id="m-btn">
-											m
-										</label>
-										<label for="l-btn">
-											<input type="radio" id="l-btn">
-											l
-										</label>
-									</div>
+										}                                        
+									</div>                                   
 								</li>
+							}
+							@foreach (var bedenlerim in Model.Urundetaylarım)
+							{
+								var beden = bedenlerim.Beden;
+								var bedenler = beden.Split(',');								
+								<li>										
+									<span>Mevcut Beden:</span>
+									<div class="size__btn">
+										@foreach (var bedenimiz in bedenler)
+										{
+										<label for="@bedenimiz-btn" >
+											<input type="radio" id="@bedenimiz-btn">
+												@bedenimiz
+											
+												</label>
+										}										
+									</div>									
+								</li>							
+							}
 								<li>
 									<span>Promotions:</span>
 									<p>Free shipping</p>
