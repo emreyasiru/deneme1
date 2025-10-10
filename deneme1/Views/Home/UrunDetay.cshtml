@@ -95,23 +95,27 @@
                         </ul>
                     </div>
                     <div class="product__details__widget">
-                        <ul>                            
-                            <li>
-                                <span>Mevcut renk:</span>
-                                @foreach(var renklerim in Model.Urundetaylarım)
-                                {
-                                    var renk = renklerim.Renk;
-									var renkler = renk.Split(',');
-
-                                    <div class="color__checkbox">
-                                            <label for="@renkler">
-                                            <input type="radio" name="color__radio" id="@renkler" checked>
-                                            <span class="checkmark"></span>
-                                        </label>                                        
-                                    </div>                                   
-                                    }
-                                </li>
+                        <ul> 
+                            @foreach (var renklerim in Model.Urundetaylarım)
+                            {
+                                var renk = renklerim.Renk;
+                                var renkler = renk.Split(',');                       
                                 <li>
+                                    <span>Mevcut Renk:</span>                                
+                                    <div class="color__checkbox">
+                                        @for (int p = 0; p < renkler.Length; p++)
+                                        {
+                                            var temizRenk = renkler[p].Trim();
+                                            var renkId = "color_" + p;
+                                <label for="@renkId">
+                                    <input type="radio" name="color__radio" id="@renkId" @(i == 0 ? "checked" : "")>
+                                    <span class="checkmark" style="background-color:@temizRenk;"></span>
+                                </label>
+                               }                                        
+                                    </div>                                   
+                                </li>
+                            }
+                                    <li>
                                     <span>Available size:</span>
                                     <div class="size__btn">
                                         <label for="xs-btn" class="active">
