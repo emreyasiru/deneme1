@@ -110,7 +110,7 @@
 											var temizRenk = renkler[p].Trim();
 											var renkId = "color_" + p;
 											<label for="@renkId">
-												<input type="radio" name="color__radio" id="@renkId" @(i == 0 ? "checked" : "")>
+												<input type="radio" name="color__radio" id="@renkId" @(p == 0 ? "checked" : "")>
 												<span class="checkmark" style="background-color:@temizRenk;"></span>
 											</label>
 					                     }                                        
