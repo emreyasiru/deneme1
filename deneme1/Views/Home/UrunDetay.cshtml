@@ -1,5 +1,4 @@
-﻿
-@{
+﻿@{
 	ViewData["Title"] = "UrunDetay";
 	Layout = "~/Views/Shared/_Home.cshtml";
 	int i = 0;
@@ -19,15 +18,15 @@
 							var urunId = Model.Urunlerim.First().Id;
 							if (resim.Baslangic == true)
 							{
-								<a class="pt active" href="#product-@i">
-									<img src="@Url.Content("~/uploads/urunler/" + urunId + "/" + resim.Ad)" alt="">
-								</a>
+										<a class="pt active" href="#product-@i">
+											<img src="@Url.Content("~/uploads/urunler/" + urunId + "/" + resim.Ad)" alt="">
+										</a>
 							}
 							else
 							{
-								<a class="pt" href="#product-@i">
-									<img src="@Url.Content("~/uploads/urunler/" + urunId + "/" + resim.Ad)" alt="">
-								</a>
+										<a class="pt" href="#product-@i">
+											<img src="@Url.Content("~/uploads/urunler/" + urunId + "/" + resim.Ad)" alt="">
+										</a>
 							}
 						}
 					</div>
@@ -37,7 +36,7 @@
 							{
 								k++;
 								var urunId = Model.Urunlerim.First().Id;
-								<img data-hash="product-@k" class="product__big__img" src="@Url.Content("~/uploads/urunler/" + urunId + "/" + yeni.Ad)" alt="">
+									<img data-hash="product-@k" class="product__big__img" src="@Url.Content("~/uploads/urunler/" + urunId + "/" + yeni.Ad)" alt="">
 							}
 						</div>
 					</div>
@@ -48,12 +47,12 @@
 					<h3>
 						@foreach (var urun in Model.Urunlerim)
 						{
-							@urun.UrunAdi
+						<span id="productName">@urun.UrunAdi</span>
 						}
-						<span>
+						<span style="display: inline;">
 							Marka:&nbsp;@foreach (var marka in Model.Urundetaylarım)
 							{
-								@marka.Marka
+						<span id="productBrand" style="display: inline;">@marka.Marka</span>
 							}
 						</span>
 					</h3>
@@ -66,31 +65,39 @@
 						<span>( 138 reviews )</span>
 					</div>
 					<div class="product__details__price">                           
-						@foreach (var fiyat in Model.Urunlerim)
-						{
-							if (fiyat.IndirimliFiyat > 0)
+						@{
+							var fiyat = Model.Urunlerim.FirstOrDefault();
+							if (fiyat != null)
 							{
-								@:$@fiyat.IndirimliFiyat
-								<span>$@fiyat.Satis</span>
+								if (fiyat.IndirimliFiyat.HasValue && fiyat.IndirimliFiyat.Value > 0)
+								{
+										<!-- İndirimli fiyat - SPAN KULLANMA -->
+									<text>$@fiyat.IndirimliFiyat.Value</text>
+										<!-- Eski fiyat - span ile üzeri çizili -->
+													<span>$@fiyat.Satis</span>
+								}
+								else
+								{
+										<!-- Normal fiyat - SPAN KULLANMA -->
+									<text>$@fiyat.Satis</text>
+								}
 							}
-							else
-							{                           
-								@:$@fiyat.Satis                              
-							}
-						}                           
-					</div>
+						}
+						</div>
 					@foreach (var acıklama in Model.Urunlerim)
 					{
-						<p>@acıklama.Aciklama</p>
+							<p>@acıklama.Aciklama</p>
 					}
 					<div class="product__details__button">
 						<div class="quantity">
 							<span>Adet:</span>
 							<div class="pro-qty">
-								<input type="text" value="1">
+								<input type="text" id="quantityInput" value="1">
 							</div>
 						</div>
-						<a href="#" class="cart-btn"><span class="icon_bag_alt"></span>Sepete Ekle</a>
+						<a href="javascript:void(0);" id="addToCartBtn" class="cart-btn">
+							<span class="icon_bag_alt"></span>Sepete Ekle
+						</a>
 						<ul>
 							<li><a href="#"><span class="icon_heart_alt"></span></a></li>
 							<li><a href="#"><span class="icon_adjust-horiz"></span></a></li>
@@ -101,41 +108,54 @@
 							@foreach (var renklerim in Model.Urundetaylarım)
 							{
 								var renk = renklerim.Renk;
-								var renkler = renk.Split(',');                       
-								<li>
-									<span>Mevcut Renk:</span>                                
-									<div class="color__checkbox">
-										@for (int p = 0; p < renkler.Length; p++)
-										{
-											var temizRenk = renkler[p].Trim();
-											var renkId = "color_" + p;
-											<label for="@renkId">
-												<input type="radio" name="color__radio" id="@renkId" @(p == 0 ? "checked" : "")>
-												<span class="checkmark" style="background-color:@temizRenk;"></span>
-											</label>
-										}                                        
-									</div>                                   
-								</li>
+								if (!string.IsNullOrEmpty(renk))
+								{
+									var renkler = renk.Split(',');                       
+											<li>
+												<span>Mevcut Renk:</span>                                
+												<div class="color__checkbox">
+											@for (int p = 0; p < renkler.Length; p++)
+											{
+												var temizRenk = renkler[p].Trim();
+												var renkId = "color_" + p;
+															<label for="@renkId">
+																<input type="radio" name="color__radio" class="color-radio" 
+																	   id="@renkId" value="@temizRenk" @(p == 0 ? "checked" : "")>
+																<span class="checkmark" style="background-color:@temizRenk;"></span>
+															</label>
+											}                                        
+												</div>                                   
+											</li>
+								}
 							}
 							@foreach (var bedenlerim in Model.Urundetaylarım)
 							{
 								var beden = bedenlerim.Beden;
-								var bedenler = beden.Split(',');								
-								<li>										
-									<span>Mevcut Beden:</span>
-									<div class="size__btn">
-										@foreach (var bedenimiz in bedenler)
-										{
-											<label for="@bedenimiz-btn" >
-												<input type="radio" id="@bedenimiz-btn">
-												@bedenimiz
-
-											</label>
-										}										
-									</div>									
-								</li>							
+								if (!string.IsNullOrEmpty(beden))
+								{
+									var bedenler = beden.Split(',');								
+											<li>										
+												<span>Mevcut Beden:</span>
+												<div class="size__btn">
+											@{
+												int bedenIndex = 0;
+											}
+											@foreach (var bedenimiz in bedenler)
+											{
+												var temizBeden = bedenimiz.Trim();
+												var bedenId = "size_" + bedenIndex;
+															<label for="@bedenId">
+																<input type="radio" name="size__radio" class="size-radio" 
+																	   id="@bedenId" value="@temizBeden" 
+													@(bedenIndex == 0 ? "checked" : "")>
+													@temizBeden
+															</label>
+												bedenIndex++;
+											}										
+												</div>									
+											</li>
+								}
 							}
-
 						</ul>
 					</div>
 				</div>
@@ -143,7 +163,6 @@
 			<div class="col-lg-12">
 				<div class="product__details__tab">
 					<ul class="nav nav-tabs" role="tablist">
-
 						<li class="nav-item">
 							<a class="nav-link active" data-toggle="tab" href="#tabs-1" role="tab">Açıklama</a>
 						</li>
@@ -159,195 +178,269 @@
 							@foreach (var acıklama in Model.Urunlerim)
 							{
 								var acık = acıklama.Aciklama;
-								<h6>Açıklama</h6>
-								<p>@acık</p>
+									<h6>Açıklama</h6>
+									<p>@acık</p>
 							}
-							
-							</div>
-							<div class="tab-pane" id="tabs-2" role="tabpanel">
-								<h6>Specification</h6>
-								<p>Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut loret fugit, sed
-									quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt loret.
-									Neque porro lorem quisquam est, qui dolorem ipsum quia dolor si. Nemo enim ipsam
-									voluptatem quia voluptas sit aspernatur aut odit aut loret fugit, sed quia ipsu
-									consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Nulla
-								consequat massa quis enim.</p>
-								<p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget
-									dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes,
-									nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium
-								quis, sem.</p>
-							</div>
-							<div class="tab-pane" id="tabs-3" role="tabpanel">
-								<h6>Reviews ( 2 )</h6>
-								<p>Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut loret fugit, sed
-									quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt loret.
-									Neque porro lorem quisquam est, qui dolorem ipsum quia dolor si. Nemo enim ipsam
-									voluptatem quia voluptas sit aspernatur aut odit aut loret fugit, sed quia ipsu
-									consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Nulla
-								consequat massa quis enim.</p>
-								<p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget
-									dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes,
-									nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium
-								quis, sem.</p>
-							</div>
 						</div>
-					</div>
-				</div>
-			</div>
-			<div class="row">
-				<div class="col-lg-12 text-center">
-					<div class="related__title">
-						<h5>RELATED PRODUCTS</h5>
-					</div>
-				</div>
-				<div class="col-lg-3 col-md-4 col-sm-6">
-					<div class="product__item">
-						<div class="product__item__pic set-bg" data-setbg="img/product/related/rp-1.jpg">
-							<div class="label new">New</div>
-							<ul class="product__hover">
-								<li><a href="img/product/related/rp-1.jpg" class="image-popup"><span class="arrow_expand"></span></a></li>
-								<li><a href="#"><span class="icon_heart_alt"></span></a></li>
-								<li><a href="#"><span class="icon_bag_alt"></span></a></li>
-							</ul>
+						<div class="tab-pane" id="tabs-2" role="tabpanel">
+							<h6>Specification</h6>
+							<p>Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut loret fugit, sed
+								quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt loret.
+								Neque porro lorem quisquam est, qui dolorem ipsum quia dolor si. Nemo enim ipsam
+								voluptatem quia voluptas sit aspernatur aut odit aut loret fugit, sed quia ipsu
+								consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Nulla
+							consequat massa quis enim.</p>
+							<p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget
+								dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes,
+								nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium
+							quis, sem.</p>
 						</div>
-						<div class="product__item__text">
-							<h6><a href="#">Buttons tweed blazer</a></h6>
-							<div class="rating">
-								<i class="fa fa-star"></i>
-								<i class="fa fa-star"></i>
-								<i class="fa fa-star"></i>
-								<i class="fa fa-star"></i>
-								<i class="fa fa-star"></i>
-							</div>
-							<div class="product__price">$ 59.0</div>
-						</div>
-					</div>
-				</div>
-				<div class="col-lg-3 col-md-4 col-sm-6">
-					<div class="product__item">
-						<div class="product__item__pic set-bg" data-setbg="img/product/related/rp-2.jpg">
-							<ul class="product__hover">
-								<li><a href="img/product/related/rp-2.jpg" class="image-popup"><span class="arrow_expand"></span></a></li>
-								<li><a href="#"><span class="icon_heart_alt"></span></a></li>
-								<li><a href="#"><span class="icon_bag_alt"></span></a></li>
-							</ul>
-						</div>
-						<div class="product__item__text">
-							<h6><a href="#">Flowy striped skirt</a></h6>
-							<div class="rating">
-								<i class="fa fa-star"></i>
-								<i class="fa fa-star"></i>
-								<i class="fa fa-star"></i>
-								<i class="fa fa-star"></i>
-								<i class="fa fa-star"></i>
-							</div>
-							<div class="product__price">$ 49.0</div>
-						</div>
-					</div>
-				</div>
-				<div class="col-lg-3 col-md-4 col-sm-6">
-					<div class="product__item">
-						<div class="product__item__pic set-bg" data-setbg="img/product/related/rp-3.jpg">
-							<div class="label stockout">out of stock</div>
-							<ul class="product__hover">
-								<li><a href="img/product/related/rp-3.jpg" class="image-popup"><span class="arrow_expand"></span></a></li>
-								<li><a href="#"><span class="icon_heart_alt"></span></a></li>
-								<li><a href="#"><span class="icon_bag_alt"></span></a></li>
-							</ul>
-						</div>
-						<div class="product__item__text">
-							<h6><a href="#">Cotton T-Shirt</a></h6>
-							<div class="rating">
-								<i class="fa fa-star"></i>
-								<i class="fa fa-star"></i>
-								<i class="fa fa-star"></i>
-								<i class="fa fa-star"></i>
-								<i class="fa fa-star"></i>
-							</div>
-							<div class="product__price">$ 59.0</div>
-						</div>
-					</div>
-				</div>
-				<div class="col-lg-3 col-md-4 col-sm-6">
-					<div class="product__item">
-						<div class="product__item__pic set-bg" data-setbg="img/product/related/rp-4.jpg">
-							<ul class="product__hover">
-								<li><a href="img/product/related/rp-4.jpg" class="image-popup"><span class="arrow_expand"></span></a></li>
-								<li><a href="#"><span class="icon_heart_alt"></span></a></li>
-								<li><a href="#"><span class="icon_bag_alt"></span></a></li>
-							</ul>
-						</div>
-						<div class="product__item__text">
-							<h6><a href="#">Slim striped pocket shirt</a></h6>
-							<div class="rating">
-								<i class="fa fa-star"></i>
-								<i class="fa fa-star"></i>
-								<i class="fa fa-star"></i>
-								<i class="fa fa-star"></i>
-								<i class="fa fa-star"></i>
-							</div>
-							<div class="product__price">$ 59.0</div>
+						<div class="tab-pane" id="tabs-3" role="tabpanel">
+							<h6>Reviews ( 2 )</h6>
+							<p>Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut loret fugit, sed
+								quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt loret.
+								Neque porro lorem quisquam est, qui dolorem ipsum quia dolor si. Nemo enim ipsam
+								voluptatem quia voluptas sit aspernatur aut odit aut loret fugit, sed quia ipsu
+								consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Nulla
+							consequat massa quis enim.</p>
+							<p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget
+								dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes,
+								nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium
+							quis, sem.</p>
 						</div>
 					</div>
 				</div>
 			</div>
 		</div>
-	</section>
-	<!-- Product Details Section End -->
-
-	<!-- Instagram Begin -->
-	<div class="instagram">
-		<div class="container-fluid">
-			<div class="row">
-				<div class="col-lg-2 col-md-4 col-sm-4 p-0">
-					<div class="instagram__item set-bg" data-setbg="img/instagram/insta-1.jpg">
-						<div class="instagram__text">
-							<i class="fa fa-instagram"></i>
-							<a href="#"> ashion_shop</a>
+		<div class="row">
+			<div class="col-lg-12 text-center">
+				<div class="related__title">
+					<h5>RELATED PRODUCTS</h5>
+				</div>
+			</div>
+			<div class="col-lg-3 col-md-4 col-sm-6">
+				<div class="product__item">
+					<div class="product__item__pic set-bg" data-setbg="img/product/related/rp-1.jpg">
+						<div class="label new">New</div>
+						<ul class="product__hover">
+							<li><a href="img/product/related/rp-1.jpg" class="image-popup"><span class="arrow_expand"></span></a></li>
+							<li><a href="#"><span class="icon_heart_alt"></span></a></li>
+							<li><a href="#"><span class="icon_bag_alt"></span></a></li>
+						</ul>
+					</div>
+					<div class="product__item__text">
+						<h6><a href="#">Buttons tweed blazer</a></h6>
+						<div class="rating">
+							<i class="fa fa-star"></i>
+							<i class="fa fa-star"></i>
+							<i class="fa fa-star"></i>
+							<i class="fa fa-star"></i>
+							<i class="fa fa-star"></i>
 						</div>
+						<div class="product__price">$ 59.0</div>
 					</div>
 				</div>
-				<div class="col-lg-2 col-md-4 col-sm-4 p-0">
-					<div class="instagram__item set-bg" data-setbg="img/instagram/insta-2.jpg">
-						<div class="instagram__text">
-							<i class="fa fa-instagram"></i>
-							<a href="#"> ashion_shop</a>
+			</div>
+			<div class="col-lg-3 col-md-4 col-sm-6">
+				<div class="product__item">
+					<div class="product__item__pic set-bg" data-setbg="img/product/related/rp-2.jpg">
+						<ul class="product__hover">
+							<li><a href="img/product/related/rp-2.jpg" class="image-popup"><span class="arrow_expand"></span></a></li>
+							<li><a href="#"><span class="icon_heart_alt"></span></a></li>
+							<li><a href="#"><span class="icon_bag_alt"></span></a></li>
+						</ul>
+					</div>
+					<div class="product__item__text">
+						<h6><a href="#">Flowy striped skirt</a></h6>
+						<div class="rating">
+							<i class="fa fa-star"></i>
+							<i class="fa fa-star"></i>
+							<i class="fa fa-star"></i>
+							<i class="fa fa-star"></i>
+							<i class="fa fa-star"></i>
 						</div>
+						<div class="product__price">$ 49.0</div>
 					</div>
 				</div>
-				<div class="col-lg-2 col-md-4 col-sm-4 p-0">
-					<div class="instagram__item set-bg" data-setbg="img/instagram/insta-3.jpg">
-						<div class="instagram__text">
-							<i class="fa fa-instagram"></i>
-							<a href="#"> ashion_shop</a>
+			</div>
+			<div class="col-lg-3 col-md-4 col-sm-6">
+				<div class="product__item">
+					<div class="product__item__pic set-bg" data-setbg="img/product/related/rp-3.jpg">
+						<div class="label stockout">out of stock</div>
+						<ul class="product__hover">
+							<li><a href="img/product/related/rp-3.jpg" class="image-popup"><span class="arrow_expand"></span></a></li>
+							<li><a href="#"><span class="icon_heart_alt"></span></a></li>
+							<li><a href="#"><span class="icon_bag_alt"></span></a></li>
+						</ul>
+					</div>
+					<div class="product__item__text">
+						<h6><a href="#">Cotton T-Shirt</a></h6>
+						<div class="rating">
+							<i class="fa fa-star"></i>
+							<i class="fa fa-star"></i>
+							<i class="fa fa-star"></i>
+							<i class="fa fa-star"></i>
+							<i class="fa fa-star"></i>
 						</div>
+						<div class="product__price">$ 59.0</div>
 					</div>
 				</div>
-				<div class="col-lg-2 col-md-4 col-sm-4 p-0">
-					<div class="instagram__item set-bg" data-setbg="img/instagram/insta-4.jpg">
-						<div class="instagram__text">
-							<i class="fa fa-instagram"></i>
-							<a href="#"> ashion_shop</a>
-						</div>
+			</div>
+			<div class="col-lg-3 col-md-4 col-sm-6">
+				<div class="product__item">
+					<div class="product__item__pic set-bg" data-setbg="img/product/related/rp-4.jpg">
+						<ul class="product__hover">
+							<li><a href="img/product/related/rp-4.jpg" class="image-popup"><span class="arrow_expand"></span></a></li>
+							<li><a href="#"><span class="icon_heart_alt"></span></a></li>
+							<li><a href="#"><span class="icon_bag_alt"></span></a></li>
+						</ul>
 					</div>
-				</div>
-				<div class="col-lg-2 col-md-4 col-sm-4 p-0">
-					<div class="instagram__item set-bg" data-setbg="img/instagram/insta-5.jpg">
-						<div class="instagram__text">
-							<i class="fa fa-instagram"></i>
-							<a href="#"> ashion_shop</a>
+					<div class="product__item__text">
+						<h6><a href="#">Slim striped pocket shirt</a></h6>
+						<div class="rating">
+							<i class="fa fa-star"></i>
+							<i class="fa fa-star"></i>
+							<i class="fa fa-star"></i>
+							<i class="fa fa-star"></i>
+							<i class="fa fa-star"></i>
 						</div>
-					</div>
-				</div>
-				<div class="col-lg-2 col-md-4 col-sm-4 p-0">
-					<div class="instagram__item set-bg" data-setbg="img/instagram/insta-6.jpg">
-						<div class="instagram__text">
-							<i class="fa fa-instagram"></i>
-							<a href="#"> ashion_shop</a>
-						</div>
+						<div class="product__price">$ 59.0</div>
 					</div>
 				</div>
 			</div>
 		</div>
 	</div>
-	<!-- Instagram End -->
+</section>
+<!-- Product Details Section End -->
+
+<!-- Instagram Begin -->
+<div class="instagram">
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-lg-2 col-md-4 col-sm-4 p-0">
+				<div class="instagram__item set-bg" data-setbg="img/instagram/insta-1.jpg">
+					<div class="instagram__text">
+						<i class="fa fa-instagram"></i>
+						<a href="#"> ashion_shop</a>
+					</div>
+				</div>
+			</div>
+			<div class="col-lg-2 col-md-4 col-sm-4 p-0">
+				<div class="instagram__item set-bg" data-setbg="img/instagram/insta-2.jpg">
+					<div class="instagram__text">
+						<i class="fa fa-instagram"></i>
+						<a href="#"> ashion_shop</a>
+					</div>
+				</div>
+			</div>
+			<div class="col-lg-2 col-md-4 col-sm-4 p-0">
+				<div class="instagram__item set-bg" data-setbg="img/instagram/insta-3.jpg">
+					<div class="instagram__text">
+						<i class="fa fa-instagram"></i>
+						<a href="#"> ashion_shop</a>
+					</div>
+				</div>
+			</div>
+			<div class="col-lg-2 col-md-4 col-sm-4 p-0">
+				<div class="instagram__item set-bg" data-setbg="img/instagram/insta-4.jpg">
+					<div class="instagram__text">
+						<i class="fa fa-instagram"></i>
+						<a href="#"> ashion_shop</a>
+					</div>
+				</div>
+			</div>
+			<div class="col-lg-2 col-md-4 col-sm-4 p-0">
+				<div class="instagram__item set-bg" data-setbg="img/instagram/insta-5.jpg">
+					<div class="instagram__text">
+						<i class="fa fa-instagram"></i>
+						<a href="#"> ashion_shop</a>
+					</div>
+				</div>
+			</div>
+			<div class="col-lg-2 col-md-4 col-sm-4 p-0">
+				<div class="instagram__item set-bg" data-setbg="img/instagram/insta-6.jpg">
+					<div class="instagram__text">
+						<i class="fa fa-instagram"></i>
+						<a href="#"> ashion_shop</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- Instagram End -->
+
+<!-- Hidden data -->
+<input type="hidden" id="productId" value="@Model.Urunlerim.First().Id" />
+@{
+	var ilkGorsel = Model.Urungorsellerim.FirstOrDefault(x => x.Baslangic == true) ?? Model.Urungorsellerim.FirstOrDefault();
+	var gorselYol = ilkGorsel != null ? Url.Content($"~/uploads/urunler/{Model.Urunlerim.First().Id}/{ilkGorsel.Ad}") : "";
+}
+<input type="hidden" id="productImage" value="@gorselYol" />
+
+@section Scripts {
+	<script>
+		$(document).ready(function() {
+			// Sepete ekleme işlemi
+			$('#addToCartBtn').click(function(e) {
+				e.preventDefault();
+
+				var productId = parseInt($('#productId').val());
+				var productName = $('#productName').text().trim();
+				var productBrand = $('#productBrand').text().trim();
+				var price = parseFloat($('#currentPrice').data('price'));
+				var quantity = parseInt($('#quantityInput').val()) || 1;
+				var imageUrl = $('#productImage').val();
+
+				var selectedColor = '';
+				var colorRadio = $('input[name="color__radio"]:checked');
+				if (colorRadio.length > 0) {
+					selectedColor = colorRadio.val();
+				}
+
+				var selectedSize = '';
+				var sizeRadio = $('input[name="size__radio"]:checked');
+				if (sizeRadio.length > 0) {
+					selectedSize = sizeRadio.val();
+				}
+
+				if (quantity <= 0) {
+					alert('Lütfen geçerli bir miktar girin!');
+					return;
+				}
+
+				$.ajax({
+					url: '@Url.Action("SepeteEkle", "Home")',
+					type: 'POST',
+					data: {
+						productId: productId,
+						productName: productName,
+						brand: productBrand,
+						price: price,
+						imageUrl: imageUrl,
+						quantity: quantity,
+						color: selectedColor,
+						size: selectedSize
+					},
+					success: function(response) {
+						if(response.success) {
+							$('#cartCount').text(response.totalItems);
+							$('#cartCountMobile').text(response.totalItems);
+
+							if(response.totalItems > 0) {
+								$('#cartCount').show();
+								$('#cartCountMobile').show();
+							}
+
+							alert('Ürün sepete eklendi! ✓');
+						}
+					},
+					error: function(xhr, status, error) {
+						console.error('Hata:', error);
+						alert('Bir hata oluştu. Lütfen tekrar deneyin.');
+					}
+				});
+			});
+		});
+	</script>
+}

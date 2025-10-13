@@ -1,3 +1,4 @@
+using Newtonsoft.Json;
 using deneme1.Models;
 using eticaret.Modeller;
 using eticaret.Models;
@@ -300,9 +301,67 @@ namespace deneme1.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
+        [HttpPost]
+        public IActionResult SepeteEkle(int productId, string productName, string brand,
+                                decimal price, string imageUrl, int quantity,
+                                string color, string size)
+        {
+            var cart = GetCart();
+            cart.AddItem(productId, productName, brand, price, imageUrl, quantity, color, size);
+            SaveCart(cart);
+
+            return Json(new { success = true, totalItems = cart.GetTotalItems() });
+        }
+
+        [HttpGet]
+        public IActionResult SepetAdetAl()
+        {
+            var cart = GetCart();
+            return Json(new { totalItems = cart.GetTotalItems() });
+        }
+
+        [HttpPost]
+        public IActionResult SepetGuncelle(int productId, string color, string size, int quantity)
+        {
+            var cart = GetCart();
+            cart.UpdateQuantity(productId, color, size, quantity);
+            SaveCart(cart);
+
+            return Json(new { success = true, totalItems = cart.GetTotalItems(), totalPrice = cart.GetTotalPrice() });
+        }
+
+        [HttpPost]
+        public IActionResult SepettenSil(int productId, string color, string size)
+        {
+            var cart = GetCart();
+            cart.RemoveItem(productId, color, size);
+            SaveCart(cart);
+
+            return Json(new { success = true, totalItems = cart.GetTotalItems(), totalPrice = cart.GetTotalPrice() });
+        }
+
+        // Private helper metodlar
+        private Cart GetCart()
+        {
+            var cartJson = HttpContext.Session.GetString("Cart");
+            if (string.IsNullOrEmpty(cartJson))
+            {
+                return new Cart();
+            }
+            return JsonConvert.DeserializeObject<Cart>(cartJson);
+        }
+
+        private void SaveCart(Cart cart)
+        {
+            var cartJson = JsonConvert.SerializeObject(cart);
+            HttpContext.Session.SetString("Cart", cartJson);
+        }
+
+        // MEVCUT Sepet metodunu þu þekilde güncelleyin:
         public IActionResult Sepet()
         {
-            return View();
+            var cart = GetCart();
+            return View(cart);
         }
     }
 }

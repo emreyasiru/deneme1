@@ -47,7 +47,7 @@
             <li>
                 <a asp-action="Sepet" asp-controller="Home">
                     <span class="icon_bag_alt"></span>
-                    <div class="tip">2</div>
+                    <div class="tip" id="cartCountMobile">0</div>
                 </a>
             </li>
         </ul>
@@ -58,17 +58,17 @@
         @if (HttpContextAccessor.HttpContext.Session.GetString("username") != null)
         {
             var isim = HttpContextAccessor.HttpContext.Session.GetString("username");
-            <div class="header__right__auth">
-                <a asp-action="Profil" asp-controller="Home">@isim</a>
-                <a asp-action="Cikis" asp-controller="Home"> Logout</a>
-            </div>
+                <div class="header__right__auth">
+                    <a asp-action="Profil" asp-controller="Home">@isim</a>
+                    <a asp-action="Cikis" asp-controller="Home"> Logout</a>
+                </div>
         }
         else
         {
-            <div class="header__right__auth">
-                <a asp-action="Uye" asp-controller="Home">Login</a>
-                <a asp-action="Uye" asp-controller="Home">Register</a>
-            </div>
+                <div class="header__right__auth">
+                    <a asp-action="Uye" asp-controller="Home">Login</a>
+                    <a asp-action="Uye" asp-controller="Home">Register</a>
+                </div>
         }
     </div>
     <!-- Offcanvas Menu End -->
@@ -107,16 +107,17 @@
                         @if (HttpContextAccessor.HttpContext.Session.GetString("username") != null)
                         {
                             var isim = HttpContextAccessor.HttpContext.Session.GetString("username");
-                            <div class="header__right__auth">
-                                <a asp-action="Profil" asp-controller="Home">@isim</a>
-                                <a asp-action="Cikis" asp-controller="Home">Logout</a>
-                            </div>
+                                <div class="header__right__auth">
+                                    <a asp-action="Profil" asp-controller="Home">@isim</a>
+                                    <a asp-action="Cikis" asp-controller="Home">Logout</a>
+                                </div>
                         }
-                        else{
-                        <div class="header__right__auth">
-                            <a asp-action="Uye" asp-controller="Home">Login</a>
-                            <a asp-action="Uye" asp-controller="Home">Register</a>
-                        </div>
+                        else
+                        {
+                            <div class="header__right__auth">
+                                <a asp-action="Uye" asp-controller="Home">Login</a>
+                                <a asp-action="Uye" asp-controller="Home">Register</a>
+                            </div>
                         }
                         <ul class="header__right__widget">
                             <li><span class="icon_search search-switch"></span></li>
@@ -127,9 +128,9 @@
                                 </a>
                             </li>
                             <li>
-                                <a href="#">
+                                <a asp-action="Sepet" asp-controller="Home">
                                     <span class="icon_bag_alt"></span>
-                                    <div class="tip">2</div>
+                                    <div class="tip" id="cartCount">0</div>
                                 </a>
                             </li>
                         </ul>
@@ -145,7 +146,7 @@
     <div>
         @RenderBody()
     </div>
-    
+
     <footer class="footer">
         <div class="container">
             <div class="row">
@@ -229,6 +230,41 @@
     <script src="~/ana/js/owl.carousel.min.js"></script>
     <script src="~/ana/js/jquery.nicescroll.min.js"></script>
     <script src="~/ana/js/main.js"></script>
+
+    <!-- Sepet Sayacı Scripti -->
+    <script>
+        $(document).ready(function() {
+            // Sayfa yüklendiğinde sepet adetini al ve göster
+            updateCartCount();
+        });
+
+        function updateCartCount() {
+            $.ajax({
+                url: '@Url.Action("SepetAdetAl", "Home")',
+                type: 'GET',
+                success: function(response) {
+                    // Desktop sepet sayacı
+                    $('#cartCount').text(response.totalItems);
+                    // Mobile sepet sayacı
+                    $('#cartCountMobile').text(response.totalItems);
+
+                    // Eğer sepet boşsa sayacı gizle, doluysa göster
+                    if(response.totalItems > 0) {
+                        $('#cartCount').show();
+                        $('#cartCountMobile').show();
+                    } else {
+                        $('#cartCount').hide();
+                        $('#cartCountMobile').hide();
+                    }
+                },
+                error: function() {
+                    console.log('Sepet adedi alınamadı');
+                }
+            });
+        }
+    </script>
+
+    @await RenderSectionAsync("Scripts", required: false)
 </body>
 
 </html>
