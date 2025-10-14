@@ -64,26 +64,28 @@
 						<i class="fa fa-star"></i>
 						<span>( 138 reviews )</span>
 					</div>
-					<div class="product__details__price">                           
+					<div class="product__details__price">
 						@{
 							var fiyat = Model.Urunlerim.FirstOrDefault();
 							if (fiyat != null)
 							{
 								if (fiyat.IndirimliFiyat.HasValue && fiyat.IndirimliFiyat.Value > 0)
 								{
-										<!-- İndirimli fiyat - SPAN KULLANMA -->
-									<text>$@fiyat.IndirimliFiyat.Value</text>
-										<!-- Eski fiyat - span ile üzeri çizili -->
-													<span>$@fiyat.Satis</span>
+							<!-- İndirimli fiyat - hidden input'ta sakla -->
+							<input type="hidden" id="currentPrice" data-price="@fiyat.IndirimliFiyat.Value" />
+									@:$@fiyat.IndirimliFiyat.Value
+							<span>$@fiyat.Satis</span>
 								}
 								else
 								{
-										<!-- Normal fiyat - SPAN KULLANMA -->
-									<text>$@fiyat.Satis</text>
+							<!-- Normal fiyat - hidden input'ta sakla -->
+							<input type="hidden" id="currentPrice" data-price="@fiyat.Satis" />
+									@:$@fiyat.Satis
 								}
 							}
 						}
-						</div>
+</div>
+
 					@foreach (var acıklama in Model.Urunlerim)
 					{
 							<p>@acıklama.Aciklama</p>

@@ -363,5 +363,15 @@ namespace deneme1.Controllers
             var cart = GetCart();
             return View(cart);
         }
+
+        [HttpPost]
+        public IActionResult SepetTemizle()
+        {
+            var cart = GetCart();
+            cart.Clear();
+            SaveCart(cart);
+
+            return Json(new { success = true, totalItems = 0, totalPrice = 0 });
+        }
     }
 }

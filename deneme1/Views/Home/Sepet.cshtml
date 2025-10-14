@@ -1,8 +1,286 @@
-﻿
+﻿@model eticaret.Models.Cart
 @{
-    ViewData["Title"] = "Sepet";
+    ViewData["Title"] = "Sepetim";
     Layout = "~/Views/Shared/_Home.cshtml";
 }
 
-<h1>Sepet</h1>
+<!-- Breadcrumb Begin -->
+<div class="breadcrumb-option">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="breadcrumb__links">
+                    <a asp-action="Index" asp-controller="Home"><i class="fa fa-home"></i> Anasayfa</a>
+                    <span>Sepetim</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Breadcrumb End -->
 
+<!-- Shop Cart Section Begin -->
+<section class="shop-cart spad">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="shop__cart__table">
+                    @if (Model.Items.Any())
+                    {
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Ürün</th>
+                                        <th>Fiyat</th>
+                                        <th>Renk</th>
+                                        <th>Beden</th>
+                                        <th>Miktar</th>
+                                        <th>Toplam</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                @foreach (var item in Model.Items)
+                                {
+                                            <tr data-product-id="@item.ProductId" 
+                                                data-color="@item.SelectedColor" 
+                                                data-size="@item.SelectedSize">
+                                                <td class="cart__product__item">
+                                                    <img src="@item.ImageUrl" alt="@item.ProductName" style="width: 90px;">
+                                                    <div class="cart__product__item__title">
+                                                        <h6>@item.ProductName</h6>
+                                                        <div class="rating">
+                                                            <i class="fa fa-star"></i>
+                                                            <i class="fa fa-star"></i>
+                                                            <i class="fa fa-star"></i>
+                                                            <i class="fa fa-star"></i>
+                                                            <i class="fa fa-star"></i>
+                                                        </div>
+                                                @if (!string.IsNullOrEmpty(item.Brand))
+                                                {
+                                                                <small style="color: #999;">Marka: @item.Brand</small>
+                                                }
+                                                    </div>
+                                                </td>
+                                                <td class="cart__price">$@item.Price</td>
+                                                <td class="cart__color">
+                                            @if (!string.IsNullOrEmpty(item.SelectedColor))
+                                            {
+                                                            <span class="color-box" style="display:inline-block; width:20px; height:20px; background-color:@item.SelectedColor; border:1px solid #ddd; border-radius:3px;"></span>
+                                            }
+                                            else
+                                            {
+                                                            <span>-</span>
+                                            }
+                                                </td>
+                                                <td class="cart__size">
+                                            @if (!string.IsNullOrEmpty(item.SelectedSize))
+                                            {
+                                                            <span>@item.SelectedSize</span>
+                                            }
+                                            else
+                                            {
+                                                            <span>-</span>
+                                            }
+                                                </td>
+                                                <td class="cart__quantity">
+                                                    <div class="pro-qty">
+                                                        <input type="text" value="@item.Quantity" class="quantity-input" 
+                                                               data-product-id="@item.ProductId"
+                                                               data-color="@item.SelectedColor"
+                                                               data-size="@item.SelectedSize">
+                                                    </div>
+                                                </td>
+                                                <td class="cart__total item-total">$@item.TotalPrice</td>
+                                                <td class="cart__close">
+                                                    <a href="javascript:void(0);" class="remove-item" 
+                                                       data-product-id="@item.ProductId"
+                                                       data-color="@item.SelectedColor"
+                                                       data-size="@item.SelectedSize">
+                                                        <span class="icon_close"></span>
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                }
+                                </tbody>
+                            </table>
+                    }
+                    else
+                    {
+                            <div class="empty-cart" style="text-align: center; padding: 50px 0;">
+                                <span class="icon_bag_alt" style="font-size: 80px; color: #ddd;"></span>
+                                <h4 style="margin-top: 20px;">Sepetiniz Boş</h4>
+                                <p>Alışverişe başlamak için ürünlerimize göz atın.</p>
+                                <a asp-action="magaza" asp-controller="Home" class="primary-btn" style="margin-top: 20px;">
+                                    Alışverişe Başla
+                                </a>
+                            </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        @if (Model.Items.Any())
+        {
+                <div class="row">
+                    <div class="col-lg-6 col-md-6 col-sm-6">
+                        <div class="cart__btn">
+                            <a asp-action="magaza" asp-controller="Home">Alışverişe Devam Et</a>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-6 col-sm-6">
+                        <div class="cart__btn update__btn">
+                            <a href="javascript:void(0);" id="clearCart">
+                                <span class="icon_loading"></span> Sepeti Temizle
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="discount__content">
+                            <h6>İndirim Kodu</h6>
+                            <form action="#">
+                                <input type="text" placeholder="İndirim kodunuzu girin">
+                                <button type="submit" class="site-btn">Uygula</button>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 offset-lg-2">
+                        <div class="cart__total__procced">
+                            <h6>Sepet Özeti</h6>
+                            <ul>
+                                <li>Ara Toplam <span id="subtotal">$@Model.GetTotalPrice()</span></li>
+                                <li>Toplam <span id="total">$@Model.GetTotalPrice()</span></li>
+                            </ul>
+                            <a href="#" class="primary-btn">Ödemeye Geç</a>
+                        </div>
+                    </div>
+                </div>
+        }
+    </div>
+</section>
+<!-- Shop Cart Section End -->
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Miktar güncelleme
+            $('.quantity-input').on('change', function() {
+                var productId = $(this).data('product-id');
+                var color = $(this).data('color');
+                var size = $(this).data('size');
+                var quantity = parseInt($(this).val());
+
+                if (quantity < 1) {
+                    quantity = 1;
+                    $(this).val(1);
+                }
+
+                updateCartItem(productId, color, size, quantity);
+            });
+
+            // Ürün silme
+            $('.remove-item').on('click', function() {
+                if (confirm('Bu ürünü sepetten çıkarmak istediğinize emin misiniz?')) {
+                    var productId = $(this).data('product-id');
+                    var color = $(this).data('color');
+                    var size = $(this).data('size');
+
+                    removeCartItem(productId, color, size);
+                }
+            });
+
+            // Sepeti temizle
+            $('#clearCart').on('click', function() {
+                if (confirm('Sepetinizdeki tüm ürünleri silmek istediğinize emin misiniz?')) {
+                    $.ajax({
+                        url: '@Url.Action("SepetTemizle", "Home")',
+                        type: 'POST',
+                        success: function(response) {
+                            if (response.success) {
+                                location.reload();
+                            }
+                        }
+                    });
+                }
+            });
+        });
+
+        function updateCartItem(productId, color, size, quantity) {
+            $.ajax({
+                url: '@Url.Action("SepetGuncelle", "Home")',
+                type: 'POST',
+                data: {
+                    productId: productId,
+                    color: color,
+                    size: size,
+                    quantity: quantity
+                },
+                success: function(response) {
+                    if (response.success) {
+                        // Satır toplamını güncelle
+                        var row = $('tr[data-product-id="' + productId + '"][data-color="' + color + '"][data-size="' + size + '"]');
+                        var price = parseFloat(row.find('.cart__price').text().replace('$', ''));
+                        var total = price * quantity;
+                        row.find('.item-total').text('$' + total.toFixed(2));
+
+                        // Genel toplamı güncelle
+                        $('#subtotal').text('$' + response.totalPrice.toFixed(2));
+                        $('#total').text('$' + response.totalPrice.toFixed(2));
+
+                        // Header sepet sayısını güncelle
+                        $('#cartCount').text(response.totalItems);
+                        $('#cartCountMobile').text(response.totalItems);
+                    }
+                },
+                error: function() {
+                    alert('Bir hata oluştu. Lütfen tekrar deneyin.');
+                }
+            });
+        }
+
+        function removeCartItem(productId, color, size) {
+            $.ajax({
+                url: '@Url.Action("SepettenSil", "Home")',
+                type: 'POST',
+                data: {
+                    productId: productId,
+                    color: color,
+                    size: size
+                },
+                success: function(response) {
+                    if (response.success) {
+                        // Satırı kaldır
+                        var row = $('tr[data-product-id="' + productId + '"][data-color="' + color + '"][data-size="' + size + '"]');
+                        row.fadeOut(300, function() {
+                            $(this).remove();
+
+                            // Eğer sepet boşsa sayfayı yenile
+                            if ($('tbody tr').length === 0) {
+                                location.reload();
+                            } else {
+                                // Toplamları güncelle
+                                $('#subtotal').text('$' + response.totalPrice.toFixed(2));
+                                $('#total').text('$' + response.totalPrice.toFixed(2));
+                            }
+                        });
+
+                        // Header sepet sayısını güncelle
+                        $('#cartCount').text(response.totalItems);
+                        $('#cartCountMobile').text(response.totalItems);
+
+                        if (response.totalItems === 0) {
+                            $('#cartCount').hide();
+                            $('#cartCountMobile').hide();
+                        }
+                    }
+                },
+                error: function() {
+                    alert('Bir hata oluştu. Lütfen tekrar deneyin.');
+                }
+            });
+        }
+    </script>
+}
