@@ -115,7 +115,7 @@
 									<i class="fa fa-star"></i>
 								</div>
 								<div class="product__price">
-									 @if (urun.IndirimliFiyat!=null)
+									@if (urun.IndirimliFiyat != null&& urun.IndirimliFiyat.Value > 0)
 									{
 										<div class="product__price">
 											$ @urun.IndirimliFiyat <span>$ @urun.Satis</span>
