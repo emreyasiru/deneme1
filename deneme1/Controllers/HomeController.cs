@@ -323,9 +323,21 @@ namespace deneme1.Controllers
         [HttpPost]
         public IActionResult SepetGuncelle(int productId, string color, string size, int quantity)
         {
+            System.Diagnostics.Debug.WriteLine($"=== SEPET GÜNCELLE ===");
+            System.Diagnostics.Debug.WriteLine($"Product ID: {productId}");
+            System.Diagnostics.Debug.WriteLine($"Color: {color}");
+            System.Diagnostics.Debug.WriteLine($"Size: {size}");
+            System.Diagnostics.Debug.WriteLine($"Quantity: {quantity}");
+
             var cart = GetCart();
+            System.Diagnostics.Debug.WriteLine($"Cart Items Count ÖNCE: {cart.Items.Count}");
+
             cart.UpdateQuantity(productId, color, size, quantity);
             SaveCart(cart);
+
+            System.Diagnostics.Debug.WriteLine($"Cart Items Count SONRA: {cart.Items.Count}");
+            System.Diagnostics.Debug.WriteLine($"Total Items: {cart.GetTotalItems()}");
+            System.Diagnostics.Debug.WriteLine($"Total Price: {cart.GetTotalPrice()}");
 
             return Json(new { success = true, totalItems = cart.GetTotalItems(), totalPrice = cart.GetTotalPrice() });
         }

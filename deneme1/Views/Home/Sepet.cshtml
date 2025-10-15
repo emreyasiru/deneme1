@@ -62,7 +62,7 @@
                                                 }
                                                     </div>
                                                 </td>
-                                                <td class="cart__price">$@item.Price</td>
+                                                <td class="cart__price">$@item.Price.ToString("F2", System.Globalization.CultureInfo.InvariantCulture)</td>
                                                 <td class="cart__color">
                                             @if (!string.IsNullOrEmpty(item.SelectedColor))
                                             {
@@ -91,7 +91,7 @@
                                                                data-size="@item.SelectedSize">
                                                     </div>
                                                 </td>
-                                                <td class="cart__total item-total">$@item.TotalPrice</td>
+                                                <td class="cart__total item-total">$@item.TotalPrice.ToString("F2", System.Globalization.CultureInfo.InvariantCulture)</td>
                                                 <td class="cart__close">
                                                     <a href="javascript:void(0);" class="remove-item" 
                                                        data-product-id="@item.ProductId"
@@ -151,8 +151,8 @@
                         <div class="cart__total__procced">
                             <h6>Sepet Özeti</h6>
                             <ul>
-                                <li>Ara Toplam <span id="subtotal">$@Model.GetTotalPrice()</span></li>
-                                <li>Toplam <span id="total">$@Model.GetTotalPrice()</span></li>
+                                    <li>Ara Toplam <span id="subtotal">$@Model.GetTotalPrice().ToString("F2", System.Globalization.CultureInfo.InvariantCulture)</span></li>
+                                    <li>Toplam <span id="total">$@Model.GetTotalPrice().ToString("F2", System.Globalization.CultureInfo.InvariantCulture)</span></li>
                             </ul>
                             <a href="#" class="primary-btn">Ödemeye Geç</a>
                         </div>
@@ -164,123 +164,148 @@
 <!-- Shop Cart Section End -->
 
 @section Scripts {
-    <script>
-        $(document).ready(function() {
-            // Miktar güncelleme
-            $('.quantity-input').on('change', function() {
-                var productId = $(this).data('product-id');
-                var color = $(this).data('color');
-                var size = $(this).data('size');
-                var quantity = parseInt($(this).val());
+        <script>
+            $(document).ready(function() {
+                // + - butonları için event listener
+                $(document).on('click', '.pro-qty .qtybtn', function() {
+                    var input = $(this).siblings('input');
+                    var productId = input.data('product-id');
+                    var color = input.data('color');
+                    var size = input.data('size');
 
-                if (quantity < 1) {
-                    quantity = 1;
-                    $(this).val(1);
-                }
+                    // Kısa bir gecikme ile değerin güncellenmesini bekle
+                    setTimeout(function() {
+                        var quantity = parseInt(input.val());
+                        if (quantity > 0) {
+                            updateCartItem(productId, color, size, quantity);
+                        }
+                    }, 100);
+                });
 
-                updateCartItem(productId, color, size, quantity);
-            });
-
-            // Ürün silme
-            $('.remove-item').on('click', function() {
-                if (confirm('Bu ürünü sepetten çıkarmak istediğinize emin misiniz?')) {
+                // Manuel input değişikliği
+                $('.quantity-input').on('change', function() {
                     var productId = $(this).data('product-id');
                     var color = $(this).data('color');
                     var size = $(this).data('size');
+                    var quantity = parseInt($(this).val());
 
-                    removeCartItem(productId, color, size);
-                }
-            });
-
-            // Sepeti temizle
-            $('#clearCart').on('click', function() {
-                if (confirm('Sepetinizdeki tüm ürünleri silmek istediğinize emin misiniz?')) {
-                    $.ajax({
-                        url: '@Url.Action("SepetTemizle", "Home")',
-                        type: 'POST',
-                        success: function(response) {
-                            if (response.success) {
-                                location.reload();
-                            }
-                        }
-                    });
-                }
-            });
-        });
-
-        function updateCartItem(productId, color, size, quantity) {
-            $.ajax({
-                url: '@Url.Action("SepetGuncelle", "Home")',
-                type: 'POST',
-                data: {
-                    productId: productId,
-                    color: color,
-                    size: size,
-                    quantity: quantity
-                },
-                success: function(response) {
-                    if (response.success) {
-                        // Satır toplamını güncelle
-                        var row = $('tr[data-product-id="' + productId + '"][data-color="' + color + '"][data-size="' + size + '"]');
-                        var price = parseFloat(row.find('.cart__price').text().replace('$', ''));
-                        var total = price * quantity;
-                        row.find('.item-total').text('$' + total.toFixed(2));
-
-                        // Genel toplamı güncelle
-                        $('#subtotal').text('$' + response.totalPrice.toFixed(2));
-                        $('#total').text('$' + response.totalPrice.toFixed(2));
-
-                        // Header sepet sayısını güncelle
-                        $('#cartCount').text(response.totalItems);
-                        $('#cartCountMobile').text(response.totalItems);
+                    if (quantity < 1) {
+                        quantity = 1;
+                        $(this).val(1);
                     }
-                },
-                error: function() {
-                    alert('Bir hata oluştu. Lütfen tekrar deneyin.');
-                }
-            });
-        }
 
-        function removeCartItem(productId, color, size) {
-            $.ajax({
-                url: '@Url.Action("SepettenSil", "Home")',
-                type: 'POST',
-                data: {
-                    productId: productId,
-                    color: color,
-                    size: size
-                },
-                success: function(response) {
-                    if (response.success) {
-                        // Satırı kaldır
-                        var row = $('tr[data-product-id="' + productId + '"][data-color="' + color + '"][data-size="' + size + '"]');
-                        row.fadeOut(300, function() {
-                            $(this).remove();
+                    updateCartItem(productId, color, size, quantity);
+                });
 
-                            // Eğer sepet boşsa sayfayı yenile
-                            if ($('tbody tr').length === 0) {
-                                location.reload();
-                            } else {
-                                // Toplamları güncelle
-                                $('#subtotal').text('$' + response.totalPrice.toFixed(2));
-                                $('#total').text('$' + response.totalPrice.toFixed(2));
+                // Ürün silme
+                $('.remove-item').on('click', function() {
+                    if (confirm('Bu ürünü sepetten çıkarmak istediğinize emin misiniz?')) {
+                        var productId = $(this).data('product-id');
+                        var color = $(this).data('color');
+                        var size = $(this).data('size');
+
+                        removeCartItem(productId, color, size);
+                    }
+                });
+
+                // Sepeti temizle
+                $('#clearCart').on('click', function() {
+                    if (confirm('Sepetinizdeki tüm ürünleri silmek istediğinize emin misiniz?')) {
+                        $.ajax({
+                            url: '@Url.Action("SepetTemizle", "Home")',
+                            type: 'POST',
+                            success: function(response) {
+                                if (response.success) {
+                                    location.reload();
+                                }
                             }
                         });
-
-                        // Header sepet sayısını güncelle
-                        $('#cartCount').text(response.totalItems);
-                        $('#cartCountMobile').text(response.totalItems);
-
-                        if (response.totalItems === 0) {
-                            $('#cartCount').hide();
-                            $('#cartCountMobile').hide();
-                        }
                     }
-                },
-                error: function() {
-                    alert('Bir hata oluştu. Lütfen tekrar deneyin.');
-                }
+                });
             });
-        }
-    </script>
+
+            function updateCartItem(productId, color, size, quantity) {
+                $.ajax({
+                    url: '@Url.Action("SepetGuncelle", "Home")',
+                    type: 'POST',
+                    data: {
+                        productId: productId,
+                        color: color,
+                        size: size,
+                        quantity: quantity
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            // Satır toplamını güncelle
+                            var row = $('tr[data-product-id="' + productId + '"][data-color="' + color + '"][data-size="' + size + '"]');
+
+                            var priceText = row.find('.cart__price').text();
+                            // Virgülü noktaya çevir
+                            var price = parseFloat(priceText.replace('$', '').replace(',', '.').trim());
+                            var itemTotal = price * quantity;
+                            row.find('.item-total').text('$' + itemTotal.toFixed(2));
+
+                            // SEPET ÖZETİNİ GÜNCELLE
+                            $('#subtotal').text('$' + response.totalPrice.toFixed(2));
+                            $('#total').text('$' + response.totalPrice.toFixed(2));
+
+                            // Header sepet sayısını güncelle
+                            $('#cartCount').text(response.totalItems);
+                            $('#cartCountMobile').text(response.totalItems);
+
+                            if(response.totalItems > 0) {
+                                $('#cartCount').show();
+                                $('#cartCountMobile').show();
+                            }
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('AJAX Error:', error);
+                        alert('Bir hata oluştu. Lütfen tekrar deneyin.');
+                    }
+                });
+            }
+
+            function removeCartItem(productId, color, size) {
+                $.ajax({
+                    url: '@Url.Action("SepettenSil", "Home")',
+                    type: 'POST',
+                    data: {
+                        productId: productId,
+                        color: color,
+                        size: size
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            // Satırı kaldır
+                            var row = $('tr[data-product-id="' + productId + '"][data-color="' + color + '"][data-size="' + size + '"]');
+                            row.fadeOut(300, function() {
+                                $(this).remove();
+
+                                // Eğer sepet boşsa sayfayı yenile
+                                if ($('tbody tr').length === 0) {
+                                    location.reload();
+                                } else {
+                                    // Toplamları güncelle
+                                    $('#subtotal').text('$' + response.totalPrice.toFixed(2));
+                                    $('#total').text('$' + response.totalPrice.toFixed(2));
+                                }
+                            });
+
+                            // Header sepet sayısını güncelle
+                            $('#cartCount').text(response.totalItems);
+                            $('#cartCountMobile').text(response.totalItems);
+
+                            if (response.totalItems === 0) {
+                                $('#cartCount').hide();
+                                $('#cartCountMobile').hide();
+                            }
+                        }
+                    },
+                    error: function() {
+                        alert('Bir hata oluştu. Lütfen tekrar deneyin.');
+                    }
+                });
+            }
+        </script>
 }
