@@ -388,81 +388,63 @@
             // Virgülle ayrılmış string'e çevir
             const bedenStr = bedenler.length > 0 ? bedenler.join(',') : null;
             const renkStr = renkler.length > 0 ? renkler.join(',') : null;
+            const numaraStr = secilenNumaralar.length > 0 ? secilenNumaralar.sort((a, b) => a - b).join(',') : null;
 
-            // Her seçili numara için ayrı ayrı kaydet
-            if (secilenNumaralar.length > 0) {
-                let kaydedilenSayi = 0;
-                const toplamSayi = secilenNumaralar.length;
+            const formData = {
+                urunId: '@Model.UrunId',
+                numara: numaraStr,  // "40,41,42" STRING olarak gönder
+                marka: marka,
+                beden: bedenStr,    // "L,M,S" STRING
+                renk: renkStr,      // "#ff0000,#00ff00" STRING
+                boy: boy
+            };
 
-                secilenNumaralar.sort((a, b) => a - b).forEach(function(numara) {
-                    const formData = {
-                        urunId: '@Model.UrunId',
-                        numara: parseInt(numara), // INT olarak gönder
-                        marka: marka,
-                        beden: bedenStr,
-                        renk: renkStr,
-                        boy: boy
-                    };
+            $.ajax({
+                url: '@Url.Action("DetayEkle", "Admin")',
+                type: 'POST',
+                data: formData,
+                success: function(response) {
+                    if (response.success) {
+                        showAlert('success', response.message);
+                        setTimeout(function() {
+                            // Formu temizle
+                            $('#detayForm')[0].reset();
+                            secilenNumaralar = [];
+                            $('#numaralarContainer').empty();
+                            $('#secilenNumaralar').html('Henüz eklenmedi');
+                            $('.beden-check').prop('checked', false);
+                            guncelleSecilenBedenler();
+                            $('.renk-item').remove();
+                            renkSayaci = 0;
+                            renkEkle();
+                            location.reload();
+                        }, 1500);
+                    } else {
+                        showAlert('danger', response.message);
+                    }
+                },
+                error: function() {
+                    showAlert('danger', 'Bir hata oluştu!');
+                }
+            });
+        });
 
-                    $.ajax({
-                        url: '@Url.Action("DetayEkle", "Admin")',
-                        type: 'POST',
-                        data: formData,
-                        success: function(response) {
-                            kaydedilenSayi++;
-                            if (kaydedilenSayi === toplamSayi) {
-                                showAlert('success', toplamSayi + ' varyant başarıyla eklendi!');
-                                setTimeout(function() {
-                                    // Formu temizle
-                                    $('#detayForm')[0].reset();
-                                    secilenNumaralar = [];
-                                    $('#numaralarContainer').empty();
-                                    $('#secilenNumaralar').html('Henüz eklenmedi');
-                                    $('.beden-check').prop('checked', false);
-                                    guncelleSecilenBedenler();
-                                    $('.renk-item').remove();
-                                    renkSayaci = 0;
-                                    renkEkle();
-                                    location.reload();
-                                }, 1500);
-                            }
-                        },
-                        error: function() {
-                            showAlert('danger', 'Numara ' + numara + ' kaydedilirken hata oluştu!');
-                        }
-                    });
-                });
-            } else {
-                // Numara yoksa tek kayıt yap
-                const formData = {
-                    urunId: '@Model.UrunId',
-                    numara: null,
-                    marka: marka,
-                    beden: bedenStr,
-                    renk: renkStr,
-                    boy: boy
-                };
+        // Silme işlemi
+        $(document).on('click', '.btn-sil', function() {
+            const id = $(this).data('id');
 
+            if (confirm('Bu detayı silmek istediğinizden emin misiniz?')) {
                 $.ajax({
-                    url: '@Url.Action("DetayEkle", "Admin")',
+                    url: '@Url.Action("DetaySil", "Admin")',
                     type: 'POST',
-                    data: formData,
+                    data: { id: id },
                     success: function(response) {
                         if (response.success) {
                             showAlert('success', response.message);
-                            setTimeout(function() {
-                                // Formu temizle
-                                $('#detayForm')[0].reset();
-                                secilenNumaralar = [];
-                                $('#numaralarContainer').empty();
-                                $('#secilenNumaralar').html('Henüz eklenmedi');
-                                $('.beden-check').prop('checked', false);
-                                guncelleSecilenBedenler();
-                                $('.renk-item').remove();
-                                renkSayaci = 0;
-                                renkEkle();
-                                location.reload();
-                            }, 1500);
+                            $(`#detay-${id}`).fadeOut(500, function() {
+                                $(this).remove();
+                                checkEmptyTable();
+                            });
                         } else {
                             showAlert('danger', response.message);
                         }
@@ -473,6 +455,17 @@
                 });
             }
         });
+
+        function checkEmptyTable() {
+            if ($('#detaylarTable tr').length === 0) {
+                $('.table-responsive').html(`
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i>
+                        Bu ürün için henüz detay eklenmemiş. Yukarıdaki formu kullanarak detay ekleyebilirsiniz.
+                    </div>
+                `);
+            }
+        }
 
         function showAlert(type, message) {
             const alertHtml = `
@@ -489,7 +482,6 @@
         }
     });
 </script>
-
 <style>
     .form-check {
         padding: 5px 0;

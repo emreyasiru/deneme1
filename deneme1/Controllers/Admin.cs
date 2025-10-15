@@ -139,22 +139,22 @@ namespace eticaret.Controllers
 
         // Yeni detay ekleme
         [HttpPost]
-        public IActionResult DetayEkle(int urunId, int? numara, string? beden, string? renk, string? boy, string? marka)
+        public IActionResult DetayEkle(int urunId, string? numara, string? beden,
+                                string? renk, string? boy, string? marka)
         {
             var userId = HttpContext.Session.GetInt32("UserId");
             if (userId == null)
             {
                 return Json(new { success = false, message = "Oturum süreniz dolmuş." });
             }
-
             try
             {
                 var detay = new UrunDetay
                 {
                     Urunid = urunId,
-                    Numara = numara,
-                    Beden = beden,      // Virgülle ayrılmış: "XL,S,XXL"
-                    Renk = renk,        // Virgülle ayrılmış: "#7b3737,#f52424"
+                    Numara = numara,      // "40,41,42" STRING
+                    Beden = beden,        // "L,M,S" STRING
+                    Renk = renk,          // "#ff0000,#00ff00" STRING
                     Boy = boy,
                     Marka = marka
                 };
@@ -169,7 +169,6 @@ namespace eticaret.Controllers
                 return Json(new { success = false, message = $"Hata: {ex.Message}" });
             }
         }
-
         // Detay silme
         [HttpPost]
         public IActionResult DetaySil(int id)

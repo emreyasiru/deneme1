@@ -5,7 +5,59 @@
 	int k = 0;
 }
 @model eticaret.Modeller.malzeme
+
+<style>
+	.numara__container {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 8px;
+		margin-top: 8px;
+	}
+
+	.numara__item {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		cursor: pointer;
+	}
+
+	.numara__input {
+		display: none;
+	}
+
+	.numara__badge {
+	display: inline-flex !important;
+	align-items: center !important;
+	justify-content: center !important;
+	width: 36px !important;
+	height: 30px !important;
+	padding: 0 4px !important;
+	border-radius: 3px;
+	background-color: #f5f5f5;
+	color: #333;
+	font-weight: 600;
+	font-size: 11px;
+	border: 1px solid #ddd;
+	cursor: pointer;
+	transition: all 0.25s ease;
+	box-sizing: border-box !important;
+}
+
+	.numara__item:hover .numara__badge {
+		border-color: #999;
+		background-color: #efefef;
+		transform: none;
+	}
+
+	.numara__input:checked + .numara__badge {
+		background-color: #d9534f;
+		color: white;
+		border-color: #d9534f;
+		box-shadow: none;
+	}
+</style>
 <!-- Product Details Section Begin -->
+
 <section class="product-details spad">
 	<div class="container">
 		<div class="row">
@@ -43,93 +95,95 @@
 				</div>
 			</div>
 			<div class="col-lg-6">
-				<div class="product__details__text">
-					<h3>
+	<div class="product__details__text">
+		<h3>
 						@foreach (var urun in Model.Urunlerim)
 						{
-						<span id="productName">@urun.UrunAdi</span>
+				<span id="productName">@urun.UrunAdi</span>
 						}
-						<span style="display: inline;">
-							Marka:&nbsp;@foreach (var marka in Model.Urundetaylarım)
+			<span style="display: inline;">
+				Marka:&nbsp;@foreach (var marka in Model.Urundetaylarım)
 							{
-						<span id="productBrand" style="display: inline;">@marka.Marka</span>
+				<span id="productBrand" style="display: inline;">@marka.Marka</span>
 							}
-						</span>
-					</h3>
-					<div class="rating">
-						<i class="fa fa-star"></i>
-						<i class="fa fa-star"></i>
-						<i class="fa fa-star"></i>
-						<i class="fa fa-star"></i>
-						<i class="fa fa-star"></i>
-						<span>( 138 reviews )</span>
-					</div>
-					<div class="product__details__price">
-						@{
-							var fiyat = Model.Urunlerim.FirstOrDefault();
-							if (fiyat != null)
-							{
-								if (fiyat.IndirimliFiyat.HasValue && fiyat.IndirimliFiyat.Value > 0)
-								{
-							<!-- İndirimli fiyat - hidden input'ta sakla -->
-							<input type="hidden" id="currentPrice" data-price="@fiyat.IndirimliFiyat.Value" />
-									@:$@fiyat.IndirimliFiyat.Value
-							<span>$@fiyat.Satis</span>
-								}
-								else
-								{
-							<!-- Normal fiyat - hidden input'ta sakla -->
-							<input type="hidden" id="currentPrice" data-price="@fiyat.Satis" />
-									@:$@fiyat.Satis
-								}
-							}
-						}
-				</div>
-
+			</span>
+		</h3>
+		<div class="rating">
+			<i class="fa fa-star"></i>
+			<i class="fa fa-star"></i>
+			<i class="fa fa-star"></i>
+			<i class="fa fa-star"></i>
+			<i class="fa fa-star"></i>
+			<span>( 138 reviews )</span>
+		</div>
+		<div class="product__details__price">
+			@{
+				var fiyat = Model.Urunlerim.FirstOrDefault();
+				if (fiyat != null)
+				{
+					if (fiyat.IndirimliFiyat.HasValue && fiyat.IndirimliFiyat.Value > 0)
+					{
+				<!-- İndirimli fiyat - hidden input'ta sakla -->
+				<input type="hidden" id="currentPrice" data-price="@fiyat.IndirimliFiyat.Value" />
+						@:$@fiyat.IndirimliFiyat.Value
+				<span>$@fiyat.Satis</span>
+					}
+					else
+					{
+				<!-- Normal fiyat - hidden input'ta sakla -->
+				<input type="hidden" id="currentPrice" data-price="@fiyat.Satis" />
+						@:$@fiyat.Satis
+					}
+				}
+			}
+	</div>
 					@foreach (var acıklama in Model.Urunlerim)
 					{
-							<p>@acıklama.Aciklama</p>
+					<p>@acıklama.Aciklama</p>
 					}
-					<div class="product__details__button">
-						<div class="quantity">
-							<span>Adet:</span>
-							<div class="pro-qty">
-								<input type="text" id="quantityInput" value="1">
-							</div>
-						</div>
-						<a href="javascript:void(0);" id="addToCartBtn" class="cart-btn">
-							<span class="icon_bag_alt"></span>Sepete Ekle
-						</a>
-						<ul>
-							<li><a href="#"><span class="icon_heart_alt"></span></a></li>
-							<li><a href="#"><span class="icon_adjust-horiz"></span></a></li>
-						</ul>
-					</div>
-					<div class="product__details__widget">
-						<ul> 
-							@foreach (var renklerim in Model.Urundetaylarım)
-							{
-								var renk = renklerim.Renk;
-								if (!string.IsNullOrEmpty(renk))
-								{
-									var renkler = renk.Split(',');                       
-											<li>
-												<span>Mevcut Renk:</span>                                
-												<div class="color__checkbox">
+		<div class="product__details__button">
+			<div class="quantity">
+				<span>Adet:</span>
+				<div class="pro-qty">
+					<input type="text" id="quantityInput" value="1">
+				</div>
+			</div>
+			<a href="javascript:void(0);" id="addToCartBtn" class="cart-btn">
+				<span class="icon_bag_alt"></span>Sepete Ekle
+			</a>
+			<ul>
+				<li><a href="#"><span class="icon_heart_alt"></span></a></li>
+				<li><a href="#"><span class="icon_adjust-horiz"></span></a></li>
+			</ul>
+		</div>
+		<div class="product__details__widget">
+			<ul>
+				<!-- RENK BÖLÜMÜ -->
+				@foreach (var renklerim in Model.Urundetaylarım)
+				{
+					var renk = renklerim.Renk;
+					if (!string.IsNullOrEmpty(renk))
+					{
+						var renkler = renk.Split(',');                       
+				<li>
+					<span>Mevcut Renk:</span>                                
+					<div class="color__checkbox">
 											@for (int p = 0; p < renkler.Length; p++)
 											{
 												var temizRenk = renkler[p].Trim();
 												var renkId = "color_" + p;
-															<label for="@renkId">
-																<input type="radio" name="color__radio" class="color-radio" 
-																	   id="@renkId" value="@temizRenk" @(p == 0 ? "checked" : "")>
-																<span class="checkmark" style="background-color:@temizRenk;"></span>
-															</label>
+							<label for="@renkId">
+								<input type="radio" name="color__radio" class="color-radio" 
+										id="@renkId" value="@temizRenk" @(p == 0 ? "checked" : "")>
+								<span class="checkmark" style="background-color:@temizRenk;"></span>
+							</label>
 											}                                        
-												</div>                                   
-											</li>
+					</div>                                   
+				</li>
 								}
 							}
+
+				<!-- BEDEN BÖLÜMÜ -->
 							@foreach (var bedenlerim in Model.Urundetaylarım)
 							{
 								var beden = bedenlerim.Beden;
@@ -139,29 +193,66 @@
 									<li>										
 										<span>Mevcut Beden:</span>
 										<div class="size__btn">
-									@{
-										int bedenIndex = 0;
-									}
-									@foreach (var bedenimiz in bedenler)
-									{
-										var temizBeden = bedenimiz.Trim();
-										var bedenId = "size_" + bedenIndex;
-											<label for="@bedenId">
-												<input type="radio" name="size__radio" class="size-radio" 
-													id="@bedenId" value="@temizBeden" 
+											@{
+												int bedenIndex = 0;
+											}
+											@foreach (var bedenimiz in bedenler)
+											{
+												var temizBeden = bedenimiz.Trim();
+												var bedenId = "size_" + bedenIndex;
+												<label for="@bedenId">
+													<input type="radio" name="size__radio" class="size-radio" 
+														id="@bedenId" value="@temizBeden" 
 													@(bedenIndex == 0 ? "checked" : "")>
 													@temizBeden
-											</label>
-										bedenIndex++;
-									}										
-										</div>									
-									</li>
+												</label>
+												bedenIndex++;
+											}										
+									</div>									
+								</li>
 								}
 							}
-						</ul>
-					</div>
-				</div>
-			</div>
+
+								<!-- NUMARA BÖLÜMÜ -->
+							@{
+								var numaralarıGoster = new List<string>();
+								foreach (var detay in Model.Urundetaylarım)
+								{
+									if (!string.IsNullOrEmpty(detay.Numara))
+									{
+										var nums = detay.Numara.Split(',');
+										foreach (var n in nums)
+										{
+											if (!numaralarıGoster.Contains(n.Trim()))
+												numaralarıGoster.Add(n.Trim());
+										}
+									}
+								}
+								numaralarıGoster = numaralarıGoster.OrderBy(x => int.Parse(x)).ToList();
+							}
+
+							@if (numaralarıGoster.Count > 0)
+							{
+								<li>
+									<span>Mevcut Numara:</span>
+									<div class="numara__container">
+										@for (int o = 0; o < numaralarıGoster.Count; o++)
+										{
+															var numaraId = "numara_" + o;
+										<label for="@numaraId" class="numara__item">
+											<input type="radio" name="numara__radio" class="numara__input" 
+												id="@numaraId" value="@numaralarıGoster[o]" 
+																@(o == 0 ? "checked" : "")>
+											<span class="numara__badge">@numaralarıGoster[o]</span>
+										</label>
+											}
+									</div>	
+								</li>
+							}
+							</ul>
+		</div>
+	</div>
+</div>
 			<div class="col-lg-12">
 				<div class="product__details__tab">
 					<ul class="nav nav-tabs" role="tablist">
@@ -382,8 +473,15 @@
 
 @section Scripts {
 	<script>
-		$(document).ready(function() {
-			// Sepete ekleme işlemi
+				$(document).ready(function() {
+			// Radyo buton değiştiğinde log yap
+			$('input[type="radio"]').on('change', function() {
+				console.log('Seçili Renk:', $('input[name="color__radio"]:checked').val());
+				console.log('Seçili Beden:', $('input[name="size__radio"]:checked').val());
+				console.log('Seçili Numara:', $('input[name="numara__radio"]:checked').val());
+			});
+
+			// Sepete ekleme
 			$('#addToCartBtn').click(function(e) {
 				e.preventDefault();
 
@@ -394,17 +492,14 @@
 				var quantity = parseInt($('#quantityInput').val()) || 1;
 				var imageUrl = $('#productImage').val();
 
-				var selectedColor = '';
-				var colorRadio = $('input[name="color__radio"]:checked');
-				if (colorRadio.length > 0) {
-					selectedColor = colorRadio.val();
-				}
+				var selectedColor = $('input[name="color__radio"]:checked').val() || '';
+				var selectedSize = $('input[name="size__radio"]:checked').val() || '';
+				var selectedNumara = $('input[name="numara__radio"]:checked').val() || '';
 
-				var selectedSize = '';
-				var sizeRadio = $('input[name="size__radio"]:checked');
-				if (sizeRadio.length > 0) {
-					selectedSize = sizeRadio.val();
-				}
+				console.log('Gönderilen Veriler:');
+				console.log('Renk:', selectedColor);
+				console.log('Beden:', selectedSize);
+				console.log('Numara:', selectedNumara);
 
 				if (quantity <= 0) {
 					alert('Lütfen geçerli bir miktar girin!');
@@ -422,7 +517,8 @@
 						imageUrl: imageUrl,
 						quantity: quantity,
 						color: selectedColor,
-						size: selectedSize
+						size: selectedSize,
+						numara: selectedNumara
 					},
 					success: function(response) {
 						if(response.success) {

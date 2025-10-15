@@ -169,7 +169,10 @@ public partial class EticaretContext : DbContext
                 .HasMaxLength(50)
                 .IsUnicode(false)
                 .HasColumnName("marka");
-            entity.Property(e => e.Numara).HasColumnName("numara");
+            entity.Property(e => e.Numara)
+                .HasMaxLength(100)
+                .IsUnicode(false)
+                .HasColumnName("numara");
             entity.Property(e => e.Renk)
                 .HasMaxLength(50)
                 .IsUnicode(false)

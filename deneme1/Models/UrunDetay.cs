@@ -9,7 +9,7 @@ public partial class UrunDetay
 
     public int? Urunid { get; set; }
 
-    public int? Numara { get; set; }
+    public string? Numara { get; set; }
 
     public string? Beden { get; set; }
 
