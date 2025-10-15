@@ -84,7 +84,7 @@
 								}
 							}
 						}
-</div>
+				</div>
 
 					@foreach (var acıklama in Model.Urunlerim)
 					{
@@ -136,26 +136,26 @@
 								if (!string.IsNullOrEmpty(beden))
 								{
 									var bedenler = beden.Split(',');								
-											<li>										
-												<span>Mevcut Beden:</span>
-												<div class="size__btn">
-											@{
-												int bedenIndex = 0;
-											}
-											@foreach (var bedenimiz in bedenler)
-											{
-												var temizBeden = bedenimiz.Trim();
-												var bedenId = "size_" + bedenIndex;
-															<label for="@bedenId">
-																<input type="radio" name="size__radio" class="size-radio" 
-																	   id="@bedenId" value="@temizBeden" 
+									<li>										
+										<span>Mevcut Beden:</span>
+										<div class="size__btn">
+									@{
+										int bedenIndex = 0;
+									}
+									@foreach (var bedenimiz in bedenler)
+									{
+										var temizBeden = bedenimiz.Trim();
+										var bedenId = "size_" + bedenIndex;
+											<label for="@bedenId">
+												<input type="radio" name="size__radio" class="size-radio" 
+													id="@bedenId" value="@temizBeden" 
 													@(bedenIndex == 0 ? "checked" : "")>
 													@temizBeden
-															</label>
-												bedenIndex++;
-											}										
-												</div>									
-											</li>
+											</label>
+										bedenIndex++;
+									}										
+										</div>									
+									</li>
 								}
 							}
 						</ul>

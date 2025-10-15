@@ -4,6 +4,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+
 <div class="col-lg-12">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2>@Model.UrunAdi - Detaylar</h2>
@@ -21,12 +22,26 @@
         <div class="card-body">
             <form id="detayForm">
                 <div class="row">
-                    <div class="col-md-2">
-                        <div class="form-group">
-                            <label for="numara">Numara</label>
-                            <input type="number" class="form-control" id="numara" name="numara" placeholder="Örn: 42">
+                    <!-- NUMARA SEÇİMİ -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">
+                                <i class="fas fa-shoe-prints"></i> Numara (Opsiyonel)
+                            </label>
+                            <div class="numara-input-wrapper">
+                                <input type="number" class="form-control form-control-sm" 
+                                       id="numaraInput" placeholder="Örn: 40">
+                                <button type="button" class="btn btn-sm btn-primary" id="numaraEkleBtn">
+                                    <i class="fas fa-plus"></i> Ekle
+                                </button>
+                            </div>
+                            <div id="numaralarContainer" class="mt-3">
+                                <!-- Seçilen numaralar buraya eklenecek -->
+                            </div>
+                            <small class="text-muted d-block mt-2">
+                                <strong>Seçilen Numaralar:</strong>
+                                <span id="secilenNumaralar">Henüz eklenmedi</span>
+                            </small>
                         </div>
-                    </div>
                     <div class="col-md-2">
                         <div class="form-group">
                             <label for="marka">Marka</label>
@@ -202,6 +217,7 @@
 <script>
     let renkSayaci = 0;
     const secilenRenkler = [];
+    let secilenNumaralar = [];
 
     $(document).ready(function() {
         // İlk renk inputunu ekle
@@ -210,6 +226,67 @@
         // Beden seçimi değiştiğinde güncelle
         $('.beden-check').on('change', function() {
             guncelleSecilenBedenler();
+        });
+
+        // NUMARA EKLEME
+        $('#numaraEkleBtn').click(function() {
+            const numara = $('#numaraInput').val().trim();
+
+            if (!numara) {
+                showAlert('warning', 'Lütfen bir numara girin!');
+                return;
+            }
+
+            if (secilenNumaralar.includes(numara)) {
+                showAlert('warning', 'Bu numara zaten eklenmiş!');
+                return;
+            }
+
+            secilenNumaralar.push(numara);
+            numaraEkle(numara);
+            $('#numaraInput').val(''); // Input'u temizle
+            guncelleSecilenNumaralar();
+        });
+
+        // Enter tuşuna basınca da eklesin
+        $('#numaraInput').keypress(function(e) {
+            if (e.which === 13) {
+                e.preventDefault();
+                $('#numaraEkleBtn').click();
+            }
+        });
+
+        function numaraEkle(numara) {
+            const numaraHtml = `
+                <div class="numara-badge numara-item" data-numara="${numara}">
+                    ${numara}
+                    <button type="button" class="numara-sil" data-numara="${numara}" title="Sil">×</button>
+                </div>
+            `;
+            $('#numaralarContainer').append(numaraHtml);
+        }
+
+        function guncelleSecilenNumaralar() {
+            if (secilenNumaralar.length > 0) {
+                const numaralarText = secilenNumaralar.sort((a, b) => a - b).join(', ');
+                $('#secilenNumaralar').html(`<span class="badge bg-success">${numaralarText}</span>`);
+            } else {
+                $('#secilenNumaralar').html('Henüz eklenmedi');
+            }
+        }
+
+        // Numara silme
+        $(document).on('click', '.numara-sil', function(e) {
+            e.preventDefault();
+            const numara = $(this).data('numara').toString();
+            const index = secilenNumaralar.indexOf(numara);
+
+            if (index > -1) {
+                secilenNumaralar.splice(index, 1);
+            }
+
+            $(`.numara-item[data-numara="${numara}"]`).remove();
+            guncelleSecilenNumaralar();
         });
 
         function guncelleSecilenBedenler() {
@@ -284,17 +361,16 @@
         $('#detayForm').submit(function(e) {
             e.preventDefault();
 
-            const numara = $('#numara').val().trim() || null;
             const marka = $('#marka').val().trim();
             const boy = $('#boy').val().trim() || null;
 
-            // Seçili bedenleri al
+            // Seçili bedenleri al (OPSIYONEL)
             const bedenler = [];
             $('.beden-check:checked').each(function() {
                 bedenler.push($(this).val());
             });
 
-            // Seçili renkleri al
+            // Seçili renkleri al (OPSIYONEL)
             const renkler = [];
             $('.renk-value').each(function() {
                 const renk = $(this).val();
@@ -303,71 +379,90 @@
                 }
             });
 
-            // Validasyon
+            // Validasyon - sadece Marka zorunlu
             if (!marka) {
                 showAlert('warning', 'Lütfen marka girin!');
                 return;
             }
 
-            if (bedenler.length === 0) {
-                showAlert('warning', 'Lütfen en az bir beden seçin!');
-                return;
-            }
-
-            if (renkler.length === 0) {
-                showAlert('warning', 'Lütfen en az bir renk ekleyin!');
-                return;
-            }
-
             // Virgülle ayrılmış string'e çevir
-            const bedenStr = bedenler.join(',');
-            const renkStr = renkler.join(',');
+            const bedenStr = bedenler.length > 0 ? bedenler.join(',') : null;
+            const renkStr = renkler.length > 0 ? renkler.join(',') : null;
 
-            const formData = {
-                urunId: @Model.UrunId,
-                numara: numara,
-                marka: marka,
-                beden: bedenStr,
-                renk: renkStr,
-                boy: boy
-            };
+            // Her seçili numara için ayrı ayrı kaydet
+            if (secilenNumaralar.length > 0) {
+                let kaydedilenSayi = 0;
+                const toplamSayi = secilenNumaralar.length;
 
-            $.ajax({
-                url: '@Url.Action("DetayEkle", "Admin")',
-                type: 'POST',
-                data: formData,
-                success: function(response) {
-                    if (response.success) {
-                        showAlert('success', response.message);
-                        setTimeout(function() {
-                            location.reload();
-                        }, 1000);
-                    } else {
-                        showAlert('danger', response.message);
-                    }
-                },
-                error: function() {
-                    showAlert('danger', 'Bir hata oluştu!');
-                }
-            });
-        });
+                secilenNumaralar.sort((a, b) => a - b).forEach(function(numara) {
+                    const formData = {
+                        urunId: '@Model.UrunId',
+                        numara: parseInt(numara), // INT olarak gönder
+                        marka: marka,
+                        beden: bedenStr,
+                        renk: renkStr,
+                        boy: boy
+                    };
 
-        // Silme işlemi
-        $(document).on('click', '.btn-sil', function() {
-            const id = $(this).data('id');
+                    $.ajax({
+                        url: '@Url.Action("DetayEkle", "Admin")',
+                        type: 'POST',
+                        data: formData,
+                        success: function(response) {
+                            kaydedilenSayi++;
+                            if (kaydedilenSayi === toplamSayi) {
+                                showAlert('success', toplamSayi + ' varyant başarıyla eklendi!');
+                                setTimeout(function() {
+                                    // Formu temizle
+                                    $('#detayForm')[0].reset();
+                                    secilenNumaralar = [];
+                                    $('#numaralarContainer').empty();
+                                    $('#secilenNumaralar').html('Henüz eklenmedi');
+                                    $('.beden-check').prop('checked', false);
+                                    guncelleSecilenBedenler();
+                                    $('.renk-item').remove();
+                                    renkSayaci = 0;
+                                    renkEkle();
+                                    location.reload();
+                                }, 1500);
+                            }
+                        },
+                        error: function() {
+                            showAlert('danger', 'Numara ' + numara + ' kaydedilirken hata oluştu!');
+                        }
+                    });
+                });
+            } else {
+                // Numara yoksa tek kayıt yap
+                const formData = {
+                    urunId: '@Model.UrunId',
+                    numara: null,
+                    marka: marka,
+                    beden: bedenStr,
+                    renk: renkStr,
+                    boy: boy
+                };
 
-            if (confirm('Bu detayı silmek istediğinizden emin misiniz?')) {
                 $.ajax({
-                    url: '@Url.Action("DetaySil", "Admin")',
+                    url: '@Url.Action("DetayEkle", "Admin")',
                     type: 'POST',
-                    data: { id: id },
+                    data: formData,
                     success: function(response) {
                         if (response.success) {
                             showAlert('success', response.message);
-                            $(`#detay-${id}`).fadeOut(500, function() {
-                                $(this).remove();
-                                checkEmptyTable();
-                            });
+                            setTimeout(function() {
+                                // Formu temizle
+                                $('#detayForm')[0].reset();
+                                secilenNumaralar = [];
+                                $('#numaralarContainer').empty();
+                                $('#secilenNumaralar').html('Henüz eklenmedi');
+                                $('.beden-check').prop('checked', false);
+                                guncelleSecilenBedenler();
+                                $('.renk-item').remove();
+                                renkSayaci = 0;
+                                renkEkle();
+                                location.reload();
+                            }, 1500);
                         } else {
                             showAlert('danger', response.message);
                         }
@@ -378,17 +473,6 @@
                 });
             }
         });
-
-        function checkEmptyTable() {
-            if ($('#detaylarTable tr').length === 0) {
-                $('.table-responsive').html(`
-                    <div class="alert alert-info">
-                        <i class="fas fa-info-circle"></i>
-                        Bu ürün için henüz detay eklenmemiş. Yukarıdaki formu kullanarak detay ekleyebilirsiniz.
-                    </div>
-                `);
-            }
-        }
 
         function showAlert(type, message) {
             const alertHtml = `
@@ -415,5 +499,78 @@
     }
     .gap-1 {
         gap: 0.25rem;
+    }
+
+    .form-check {
+        padding: 5px 0;
+    }
+    .form-control-color {
+        cursor: pointer;
+    }
+    .gap-1 {
+        gap: 0.25rem;
+    }
+
+    /* Numara Input Stilleri */
+    .numara-input-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    #numaraInput {
+        width: 80px !important;
+        text-align: center;
+        font-weight: bold;
+    }
+
+    #numaralarContainer {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .numara-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+        color: white;
+        font-weight: bold;
+        font-size: 14px;
+        position: relative;
+        box-shadow: 0 2px 8px rgba(0,86,179,0.3);
+        transition: all 0.3s ease;
+    }
+
+    .numara-badge:hover {
+        transform: scale(1.1);
+        box-shadow: 0 4px 12px rgba(0,86,179,0.5);
+    }
+
+    .numara-badge .numara-sil {
+        position: absolute;
+        top: -8px;
+        right: -8px;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        background: #dc3545;
+        border: none;
+        color: white;
+        font-size: 14px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .numara-badge:hover .numara-sil {
+        opacity: 1;
     }
 </style>
