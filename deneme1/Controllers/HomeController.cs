@@ -1,12 +1,11 @@
-using Newtonsoft.Json;
+using System.Diagnostics;
+using System.Net;
+using System.Net.Mail;
 using deneme1.Models;
 using eticaret.Modeller;
 using eticaret.Models;
 using Microsoft.AspNetCore.Mvc;
-using NuGet.Versioning;
-using System.Diagnostics;
-using System.Net;
-using System.Net.Mail;
+using Newtonsoft.Json;
 
 namespace deneme1.Controllers
 {
@@ -21,16 +20,16 @@ namespace deneme1.Controllers
             _logger = logger;
         }
 
-       
+
 
         public IActionResult Index()
         {
             var urunler = new UrunListesi
             {
                 Kategorilerim = _db.AnaKategoris.ToList(),
-                Urunlerim=_db.Urunlers.ToList(),
+                Urunlerim = _db.Urunlers.ToList(),
                 UrunGorsellerim = _db.UrunGorsels.ToList(),
-                Altkategorilerim=_db.AltKategoris.ToList()
+                Altkategorilerim = _db.AltKategoris.ToList()
             };
             return View(urunler);
         }
@@ -44,12 +43,12 @@ namespace deneme1.Controllers
         {
             if (urunid == null)
             {
-                return RedirectToAction("Magaza","Home");
+                return RedirectToAction("Magaza", "Home");
             }
-            var urun= _db.Urunlers.FirstOrDefault(x => x.Id == urunid);
+            var urun = _db.Urunlers.FirstOrDefault(x => x.Id == urunid);
             var detaylar = _db.UrunDetays.Where(x => x.Urunid == urunid).ToList();
             var gorseller = _db.UrunGorsels.Where(x => x.Urunid == urunid).ToList();
-            var model= new malzeme
+            var model = new malzeme
             {
                 Urunlerim = new List<Urunler> { urun },
                 Urundetaylarým = detaylar,
@@ -144,7 +143,7 @@ namespace deneme1.Controllers
                         decimal.TryParse(temizMax, System.Globalization.NumberStyles.Any,
                         System.Globalization.CultureInfo.InvariantCulture, out decimal decimalMax))
                     {
-                       
+
 
                         // Ýndirimli fiyat varsa onu kullan, yoksa normal satýþ fiyatýný kullan
                         urunQuery = urunQuery.Where(x =>
@@ -163,7 +162,7 @@ namespace deneme1.Controllers
                         }
                         ((List<string>)ViewBag.BreadcrumbKategoriler).Add($"${decimalMin:N2} - ${decimalMax:N2}");
                     }
-                    
+
                 }
                 catch (Exception ex)
                 {
@@ -195,14 +194,14 @@ namespace deneme1.Controllers
         [HttpPost]
         public IActionResult Giriss(string mail, string sifre)
         {
-            var kullanici = _db.Misafirs.FirstOrDefault(x => x.Mail == mail && x.Sifre == sifre &&x.Durum==true);
+            var kullanici = _db.Misafirs.FirstOrDefault(x => x.Mail == mail && x.Sifre == sifre && x.Durum == true);
             if (kullanici != null)
             {
-               
-                    HttpContext.Session.SetInt32("UserId", kullanici.Id);
-                    HttpContext.Session.SetString("username", kullanici.Isim);
-                    return RedirectToAction("Index", "Home");
-               
+
+                HttpContext.Session.SetInt32("UserId", kullanici.Id);
+                HttpContext.Session.SetString("username", kullanici.Isim);
+                return RedirectToAction("Index", "Home");
+
             }
             else
             {
@@ -221,16 +220,16 @@ namespace deneme1.Controllers
             return View();
         }
         [HttpPost]
-        public IActionResult Uye(string isim,string mail,string sifre)
+        public IActionResult Uye(string isim, string mail, string sifre)
         {
-            var dogrulamakodu=new Random().Next(1000,9999).ToString();
+            var dogrulamakodu = new Random().Next(1000, 9999).ToString();
             var misafir = new Misafir
             {
                 Isim = isim,
                 Mail = mail,
                 Sifre = sifre,
                 Kod = dogrulamakodu,
-                Durum= false
+                Durum = false
             };
             _db.Misafirs.Add(misafir);
             _db.SaveChanges();
@@ -271,7 +270,7 @@ namespace deneme1.Controllers
         [HttpGet]
         public IActionResult Dogrula()
         {
-          
+
             return View();
         }
         [HttpPost]
@@ -284,7 +283,7 @@ namespace deneme1.Controllers
                 _db.SaveChanges();
                 HttpContext.Session.SetInt32("UserId", onay.Id);
                 HttpContext.Session.SetString("username", onay.Isim);
-               
+
                 TempData["Mesaj"] = "Hesabýnýz baþarýyla doðrulandý. Giriþ yapabilirsiniz.";
                 TempData["Basarili"] = "true"; // Baþarýlý doðrulama için flag
                 return View(); // Önce view'ý döndür, JavaScript ile yönlendirme yapacaðýz
@@ -304,10 +303,10 @@ namespace deneme1.Controllers
         [HttpPost]
         public IActionResult SepeteEkle(int productId, string productName, string brand,
                                 decimal price, string imageUrl, int quantity,
-                                string color, string size)
+                                string color, string size, string numara)
         {
             var cart = GetCart();
-            cart.AddItem(productId, productName, brand, price, imageUrl, quantity, color, size);
+            cart.AddItem(productId, productName, brand, price, imageUrl, quantity, color, size, numara);
             SaveCart(cart);
 
             return Json(new { success = true, totalItems = cart.GetTotalItems() });
@@ -321,32 +320,19 @@ namespace deneme1.Controllers
         }
 
         [HttpPost]
-        public IActionResult SepetGuncelle(int productId, string color, string size, int quantity)
+        public IActionResult SepetGuncelle(int productId, string color, string size, int quantity, string numara)
         {
-            System.Diagnostics.Debug.WriteLine($"=== SEPET GÜNCELLE ===");
-            System.Diagnostics.Debug.WriteLine($"Product ID: {productId}");
-            System.Diagnostics.Debug.WriteLine($"Color: {color}");
-            System.Diagnostics.Debug.WriteLine($"Size: {size}");
-            System.Diagnostics.Debug.WriteLine($"Quantity: {quantity}");
-
             var cart = GetCart();
-            System.Diagnostics.Debug.WriteLine($"Cart Items Count ÖNCE: {cart.Items.Count}");
-
-            cart.UpdateQuantity(productId, color, size, quantity);
+            cart.UpdateQuantity(productId, color, size, quantity, numara);
             SaveCart(cart);
-
-            System.Diagnostics.Debug.WriteLine($"Cart Items Count SONRA: {cart.Items.Count}");
-            System.Diagnostics.Debug.WriteLine($"Total Items: {cart.GetTotalItems()}");
-            System.Diagnostics.Debug.WriteLine($"Total Price: {cart.GetTotalPrice()}");
-
             return Json(new { success = true, totalItems = cart.GetTotalItems(), totalPrice = cart.GetTotalPrice() });
         }
 
         [HttpPost]
-        public IActionResult SepettenSil(int productId, string color, string size)
+        public IActionResult SepettenSil(int productId, string color, string size, string numara)
         {
             var cart = GetCart();
-            cart.RemoveItem(productId, color, size);
+            cart.RemoveItem(productId, color, size, numara);
             SaveCart(cart);
 
             return Json(new { success = true, totalItems = cart.GetTotalItems(), totalPrice = cart.GetTotalPrice() });

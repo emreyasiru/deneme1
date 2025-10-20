@@ -1,21 +1,18 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace eticaret.Models
+﻿namespace eticaret.Models
 {
     public class Cart
     {
         public List<CartItem> Items { get; set; } = new List<CartItem>();
 
         public void AddItem(int productId, string productName, string brand, decimal price,
-                           string imageUrl, int quantity = 1, string color = "", string size = "")
+                           string imageUrl, int quantity = 1, string color = "", string size = "", string numara = "")
         {
             // Aynı ürün, aynı renk ve aynı bedenden varsa miktarını artır
             var item = Items.FirstOrDefault(i => i.ProductId == productId &&
                                                  i.SelectedColor == color &&
-                                                 i.SelectedSize == size);
+                                                 i.SelectedSize == size &&
+                                                 i.SelectedNumara == numara);
+
 
             if (item == null)
             {
@@ -28,7 +25,8 @@ namespace eticaret.Models
                     ImageUrl = imageUrl,
                     Quantity = quantity,
                     SelectedColor = color,
-                    SelectedSize = size
+                    SelectedSize = size,
+                    SelectedNumara = numara
                 });
             }
             else
@@ -37,18 +35,20 @@ namespace eticaret.Models
             }
         }
 
-        public void RemoveItem(int productId, string color, string size)
+        public void RemoveItem(int productId, string color, string size, string numara)
         {
             Items.RemoveAll(i => i.ProductId == productId &&
                                i.SelectedColor == color &&
-                               i.SelectedSize == size);
+                               i.SelectedSize == size &&
+                               i.SelectedNumara == numara);
         }
 
-        public void UpdateQuantity(int productId, string color, string size, int quantity)
+        public void UpdateQuantity(int productId, string color, string size, int quantity, string numara)
         {
             var item = Items.FirstOrDefault(i => i.ProductId == productId &&
                                                  i.SelectedColor == color &&
-                                                 i.SelectedSize == size);
+                                                 i.SelectedSize == size &&
+                                                 i.SelectedNumara == numara);
             if (item != null)
             {
                 if (quantity <= 0)

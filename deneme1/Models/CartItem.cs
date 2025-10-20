@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace eticaret.Models
+﻿namespace eticaret.Models
 {
     public class CartItem
     {
@@ -13,6 +10,7 @@ namespace eticaret.Models
         public string ImageUrl { get; set; }
         public string SelectedColor { get; set; }
         public string SelectedSize { get; set; }
+        public string SelectedNumara { get; set; } // YENİ EKLENEN
 
         public decimal TotalPrice => Price * Quantity;
     }

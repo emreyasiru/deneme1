@@ -27,83 +27,97 @@
                 <div class="shop__cart__table">
                     @if (Model.Items.Any())
                     {
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>Ürün</th>
-                                        <th>Fiyat</th>
-                                        <th>Renk</th>
-                                        <th>Beden</th>
-                                        <th>Miktar</th>
-                                        <th>Toplam</th>
-                                        <th></th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                @foreach (var item in Model.Items)
-                                {
-                                            <tr data-product-id="@item.ProductId" 
-                                                data-color="@item.SelectedColor" 
-                                                data-size="@item.SelectedSize">
-                                                <td class="cart__product__item">
-                                                    <img src="@item.ImageUrl" alt="@item.ProductName" style="width: 90px;">
-                                                    <div class="cart__product__item__title">
-                                                        <h6>@item.ProductName</h6>
-                                                        <div class="rating">
-                                                            <i class="fa fa-star"></i>
-                                                            <i class="fa fa-star"></i>
-                                                            <i class="fa fa-star"></i>
-                                                            <i class="fa fa-star"></i>
-                                                            <i class="fa fa-star"></i>
-                                                        </div>
+                     <table>
+                        <thead>
+                            <tr>
+                                <th>Ürün</th>
+                                <th>Fiyat</th>
+                                <th>Renk</th>
+                                <th>Beden</th>
+                                <th>Numara</th>
+                                <th>Miktar</th>
+                                <th>Toplam</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            @foreach (var item in Model.Items)
+            {
+                <tr data-product-id="@item.ProductId" 
+                    data-color="@item.SelectedColor" 
+                    data-size="@item.SelectedSize"
+                    data-numara="@item.SelectedNumara">
+                    <td class="cart__product__item">
+                        <img src="@item.ImageUrl" alt="@item.ProductName" style="width: 90px;">
+                        <div class="cart__product__item__title">
+                            <h6>@item.ProductName</h6>
+                            <div class="rating">
+                                <i class="fa fa-star"></i>
+                                <i class="fa fa-star"></i>
+                                <i class="fa fa-star"></i>
+                                <i class="fa fa-star"></i>
+                                <i class="fa fa-star"></i>
+                            </div>
                                                 @if (!string.IsNullOrEmpty(item.Brand))
                                                 {
-                                                                <small style="color: #999;">Marka: @item.Brand</small>
+                                    <small style="color: #999;">Marka: @item.Brand</small>
                                                 }
-                                                    </div>
-                                                </td>
-                                                <td class="cart__price">$@item.Price.ToString("F2", System.Globalization.CultureInfo.InvariantCulture)</td>
-                                                <td class="cart__color">
+                        </div>
+                    </td>
+                    <td class="cart__price">$@item.Price.ToString("F2", System.Globalization.CultureInfo.InvariantCulture)</td>
+                    <td class="cart__color">
                                             @if (!string.IsNullOrEmpty(item.SelectedColor))
                                             {
-                                                            <span class="color-box" style="display:inline-block; width:20px; height:20px; background-color:@item.SelectedColor; border:1px solid #ddd; border-radius:3px;"></span>
+                                <span class="color-box" style="display:inline-block; width:20px; height:20px; background-color:@item.SelectedColor; border:1px solid #ddd; border-radius:3px;"></span>
                                             }
                                             else
                                             {
-                                                            <span>-</span>
+                                <span>-</span>
                                             }
-                                                </td>
-                                                <td class="cart__size">
+                    </td>
+                    <td class="cart__size">
                                             @if (!string.IsNullOrEmpty(item.SelectedSize))
                                             {
-                                                            <span>@item.SelectedSize</span>
+                                <span>@item.SelectedSize</span>
                                             }
                                             else
                                             {
-                                                            <span>-</span>
+                                <span>-</span>
                                             }
-                                                </td>
-                                                <td class="cart__quantity">
-                                                    <div class="pro-qty">
-                                                        <input type="text" value="@item.Quantity" class="quantity-input" 
-                                                               data-product-id="@item.ProductId"
-                                                               data-color="@item.SelectedColor"
-                                                               data-size="@item.SelectedSize">
-                                                    </div>
-                                                </td>
-                                                <td class="cart__total item-total">$@item.TotalPrice.ToString("F2", System.Globalization.CultureInfo.InvariantCulture)</td>
-                                                <td class="cart__close">
-                                                    <a href="javascript:void(0);" class="remove-item" 
-                                                       data-product-id="@item.ProductId"
-                                                       data-color="@item.SelectedColor"
-                                                       data-size="@item.SelectedSize">
-                                                        <span class="icon_close"></span>
-                                                    </a>
-                                                </td>
-                                            </tr>
+                    </td>
+                    <td class="cart__numara">
+                                            @if (!string.IsNullOrEmpty(item.SelectedNumara))
+                                            {
+                                <span class="badge badge-secondary">@item.SelectedNumara</span>
+                                            }
+                                            else
+                                            {
+                                <span>-</span>
+                                            }
+                    </td>
+                    <td class="cart__quantity">
+                        <div class="pro-qty">
+                            <input type="text" value="@item.Quantity" class="quantity-input" 
+                                   data-product-id="@item.ProductId"
+                                   data-color="@item.SelectedColor"
+                                   data-size="@item.SelectedSize"
+                                   data-numara="@item.SelectedNumara">
+                        </div>
+                    </td>
+                    <td class="cart__total item-total">$@item.TotalPrice.ToString("F2", System.Globalization.CultureInfo.InvariantCulture)</td>
+                    <td class="cart__close">
+                        <a href="javascript:void(0);" class="remove-item" 
+                           data-product-id="@item.ProductId"
+                           data-color="@item.SelectedColor"
+                           data-size="@item.SelectedSize"
+                           data-numara="@item.SelectedNumara">
+                            <span class="icon_close"></span>
+                        </a>
+                    </td>
+                </tr>
                                 }
-                                </tbody>
-                            </table>
+        </tbody>
+    </table>
                     }
                     else
                     {
@@ -165,147 +179,160 @@
 
 @section Scripts {
         <script>
-            $(document).ready(function() {
-                // + - butonları için event listener
-                $(document).on('click', '.pro-qty .qtybtn', function() {
-                    var input = $(this).siblings('input');
-                    var productId = input.data('product-id');
-                    var color = input.data('color');
-                    var size = input.data('size');
+               $(document).ready(function() {
+        // + - butonları için event listener
+        $(document).on('click', '.pro-qty .qtybtn', function() {
+            var input = $(this).siblings('input');
+            var productId = input.data('product-id');
+            var color = input.data('color');
+            var size = input.data('size');
+            var numara = input.data('numara');
 
-                    // Kısa bir gecikme ile değerin güncellenmesini bekle
-                    setTimeout(function() {
-                        var quantity = parseInt(input.val());
-                        if (quantity > 0) {
-                            updateCartItem(productId, color, size, quantity);
-                        }
-                    }, 100);
-                });
+            setTimeout(function() {
+                var quantity = parseInt(input.val());
+                if (quantity > 0) {
+                    updateCartItem(productId, color, size, numara, quantity);
+                }
+            }, 100);
+        });
 
-                // Manuel input değişikliği
-                $('.quantity-input').on('change', function() {
-                    var productId = $(this).data('product-id');
-                    var color = $(this).data('color');
-                    var size = $(this).data('size');
-                    var quantity = parseInt($(this).val());
+        // Manuel input değişikliği
+        $('.quantity-input').on('change', function() {
+            var productId = $(this).data('product-id');
+            var color = $(this).data('color');
+            var size = $(this).data('size');
+            var numara = $(this).data('numara');
+            var quantity = parseInt($(this).val());
 
-                    if (quantity < 1) {
-                        quantity = 1;
-                        $(this).val(1);
-                    }
+            if (quantity < 1) {
+                quantity = 1;
+                $(this).val(1);
+            }
 
-                    updateCartItem(productId, color, size, quantity);
-                });
+            updateCartItem(productId, color, size, numara, quantity);
+        });
 
-                // Ürün silme
-                $('.remove-item').on('click', function() {
-                    if (confirm('Bu ürünü sepetten çıkarmak istediğinize emin misiniz?')) {
-                        var productId = $(this).data('product-id');
-                        var color = $(this).data('color');
-                        var size = $(this).data('size');
+        // Ürün silme
+        $('.remove-item').on('click', function() {
+            if (confirm('Bu ürünü sepetten çıkarmak istediğinize emin misiniz?')) {
+                var productId = $(this).data('product-id');
+                var color = $(this).data('color');
+                var size = $(this).data('size');
+                var numara = $(this).data('numara');
 
-                        removeCartItem(productId, color, size);
-                    }
-                });
+                removeCartItem(productId, color, size, numara);
+            }
+        });
 
-                // Sepeti temizle
-                $('#clearCart').on('click', function() {
-                    if (confirm('Sepetinizdeki tüm ürünleri silmek istediğinize emin misiniz?')) {
-                        $.ajax({
-                            url: '@Url.Action("SepetTemizle", "Home")',
-                            type: 'POST',
-                            success: function(response) {
-                                if (response.success) {
-                                    location.reload();
-                                }
-                            }
-                        });
-                    }
-                });
-            });
-
-            function updateCartItem(productId, color, size, quantity) {
+        // Sepeti temizle
+        $('#clearCart').on('click', function() {
+            if (confirm('Sepetinizdeki tüm ürünleri silmek istediğinize emin misiniz?')) {
                 $.ajax({
-                    url: '@Url.Action("SepetGuncelle", "Home")',
+                    url: '@Url.Action("SepetTemizle", "Home")',
                     type: 'POST',
-                    data: {
-                        productId: productId,
-                        color: color,
-                        size: size,
-                        quantity: quantity
-                    },
                     success: function(response) {
                         if (response.success) {
-                            // Satır toplamını güncelle
-                            var row = $('tr[data-product-id="' + productId + '"][data-color="' + color + '"][data-size="' + size + '"]');
+                            location.reload();
+                        }
+                    }
+                });
+            }
+        });
+    });
 
-                            var priceText = row.find('.cart__price').text();
-                            // Virgülü noktaya çevir
-                            var price = parseFloat(priceText.replace('$', '').replace(',', '.').trim());
-                            var itemTotal = price * quantity;
-                            row.find('.item-total').text('$' + itemTotal.toFixed(2));
+    function updateCartItem(productId, color, size, numara, quantity) {
+        $.ajax({
+            url: '@Url.Action("SepetGuncelle", "Home")',
+            type: 'POST',
+            data: {
+                productId: productId,
+                color: color,
+                size: size,
+                numara: numara,
+                quantity: quantity
+            },
+            success: function(response) {
+                if (response.success) {
+                    // SELECTOR'A NUMARA EKLENDİ
+                    var selector = 'tr[data-product-id="' + productId + '"]' +
+                                  '[data-color="' + (color || '') + '"]' +
+                                  '[data-size="' + (size || '') + '"]' +
+                                  '[data-numara="' + (numara || '') + '"]';
 
-                            // SEPET ÖZETİNİ GÜNCELLE
+                    var row = $(selector);
+
+                    var priceText = row.find('.cart__price').text();
+                    var price = parseFloat(priceText.replace('$', '').replace(',', '.').trim());
+                    var itemTotal = price * quantity;
+                    row.find('.item-total').text('$' + itemTotal.toFixed(2));
+
+                    // SEPET ÖZETİNİ GÜNCELLE
+                    $('#subtotal').text('$' + response.totalPrice.toFixed(2));
+                    $('#total').text('$' + response.totalPrice.toFixed(2));
+
+                    // Header sepet sayısını güncelle
+                    $('#cartCount').text(response.totalItems);
+                    $('#cartCountMobile').text(response.totalItems);
+
+                    if(response.totalItems > 0) {
+                        $('#cartCount').show();
+                        $('#cartCountMobile').show();
+                    }
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('AJAX Error:', error);
+                alert('Bir hata oluştu. Lütfen tekrar deneyin.');
+            }
+        });
+    }
+
+    function removeCartItem(productId, color, size, numara) {
+        $.ajax({
+            url: '@Url.Action("SepettenSil", "Home")',
+            type: 'POST',
+            data: {
+                productId: productId,
+                color: color,
+                size: size,
+                numara: numara
+            },
+            success: function(response) {
+                if (response.success) {
+                    // SELECTOR'A NUMARA EKLENDİ
+                    var selector = 'tr[data-product-id="' + productId + '"]' +
+                                  '[data-color="' + (color || '') + '"]' +
+                                  '[data-size="' + (size || '') + '"]' +
+                                  '[data-numara="' + (numara || '') + '"]';
+
+                    var row = $(selector);
+                    row.fadeOut(300, function() {
+                        $(this).remove();
+
+                        // Eğer sepet boşsa sayfayı yenile
+                        if ($('tbody tr').length === 0) {
+                            location.reload();
+                        } else {
+                            // Toplamları güncelle
                             $('#subtotal').text('$' + response.totalPrice.toFixed(2));
                             $('#total').text('$' + response.totalPrice.toFixed(2));
-
-                            // Header sepet sayısını güncelle
-                            $('#cartCount').text(response.totalItems);
-                            $('#cartCountMobile').text(response.totalItems);
-
-                            if(response.totalItems > 0) {
-                                $('#cartCount').show();
-                                $('#cartCountMobile').show();
-                            }
                         }
-                    },
-                    error: function(xhr, status, error) {
-                        console.error('AJAX Error:', error);
-                        alert('Bir hata oluştu. Lütfen tekrar deneyin.');
+                    });
+
+                    // Header sepet sayısını güncelle
+                    $('#cartCount').text(response.totalItems);
+                    $('#cartCountMobile').text(response.totalItems);
+
+                    if (response.totalItems === 0) {
+                        $('#cartCount').hide();
+                        $('#cartCountMobile').hide();
                     }
-                });
+                }
+            },
+            error: function() {
+                alert('Bir hata oluştu. Lütfen tekrar deneyin.');
             }
-
-            function removeCartItem(productId, color, size) {
-                $.ajax({
-                    url: '@Url.Action("SepettenSil", "Home")',
-                    type: 'POST',
-                    data: {
-                        productId: productId,
-                        color: color,
-                        size: size
-                    },
-                    success: function(response) {
-                        if (response.success) {
-                            // Satırı kaldır
-                            var row = $('tr[data-product-id="' + productId + '"][data-color="' + color + '"][data-size="' + size + '"]');
-                            row.fadeOut(300, function() {
-                                $(this).remove();
-
-                                // Eğer sepet boşsa sayfayı yenile
-                                if ($('tbody tr').length === 0) {
-                                    location.reload();
-                                } else {
-                                    // Toplamları güncelle
-                                    $('#subtotal').text('$' + response.totalPrice.toFixed(2));
-                                    $('#total').text('$' + response.totalPrice.toFixed(2));
-                                }
-                            });
-
-                            // Header sepet sayısını güncelle
-                            $('#cartCount').text(response.totalItems);
-                            $('#cartCountMobile').text(response.totalItems);
-
-                            if (response.totalItems === 0) {
-                                $('#cartCount').hide();
-                                $('#cartCountMobile').hide();
-                            }
-                        }
-                    },
-                    error: function() {
-                        alert('Bir hata oluştu. Lütfen tekrar deneyin.');
-                    }
-                });
-            }
+        });
+    }
         </script>
 }
